@@ -24,17 +24,110 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
-		#define UID_REFERENCE_INIT 1
-
-		daijoubu_uid_ptr daijoubu_uid::m_instance = NULL;
-
-		_daijoubu_uid::_daijoubu_uid(void) :
-			m_initialized(false)
+		_daijoubu_uid_class::_daijoubu_uid_class(void) :
+			m_uid(daijoubu::acquire()->acquire_uid_factory()->generate())
 		{
-			std::atexit(daijoubu_uid::_delete);
+			return;
 		}
 
-		_daijoubu_uid::~_daijoubu_uid(void)
+		_daijoubu_uid_class::_daijoubu_uid_class(
+			__in const _daijoubu_uid_class &other
+			) :
+				m_uid(other.m_uid)
+		{
+			daijoubu_uid_factory_ptr fact = daijoubu::acquire()->acquire_uid_factory();
+
+			if(fact->contains(m_uid)) {
+				fact->increment_reference(m_uid);
+			}
+		}
+
+		_daijoubu_uid_class::~_daijoubu_uid_class(void)
+		{
+			daijoubu_uid_factory_ptr fact = daijoubu::acquire()->acquire_uid_factory();
+
+			if(fact->contains(m_uid)) {
+				fact->decrement_reference(m_uid);
+			}
+
+			m_uid = INVALID_UID;
+		}
+
+		_daijoubu_uid_class &
+		_daijoubu_uid_class::operator=(
+			__in const _daijoubu_uid_class &other
+			)
+		{
+			daijoubu_uid_factory_ptr fact = NULL;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(this != &other) {
+				fact = daijoubu::acquire()->acquire_uid_factory();
+
+				if(fact->contains(m_uid)) {
+					fact->decrement_reference(m_uid);
+				}
+
+				m_uid = other.m_uid;
+
+				if(fact->contains(m_uid)) {
+					fact->increment_reference(m_uid);
+				}
+			}
+
+			return *this;
+		}
+
+		bool 
+		_daijoubu_uid_class::operator==(
+			__in const _daijoubu_uid_class &other
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return (m_uid == other.m_uid);
+		}
+
+		bool 
+		_daijoubu_uid_class::operator!=(
+			__in const _daijoubu_uid_class &other
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return !(*this == other);
+		}
+
+		std::wstring 
+		_daijoubu_uid_class::to_string(
+			__in_opt bool verbose
+			)
+		{
+			std::wstringstream result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+			UNREFERENCE_PARAMETER(verbose);
+
+			result << L"(" << VALUE_AS_HEX(daijoubu_uid, m_uid) << L")";
+
+			return CHECK_STRING(result.str());
+		}
+
+		daijoubu_uid 
+		_daijoubu_uid_class::uid(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_uid;
+		}
+
+		daijoubu_uid_factory_ptr daijoubu_uid_factory::m_instance = NULL;
+
+		_daijoubu_uid_factory::_daijoubu_uid_factory(void) :
+			m_initialized(false)
+		{
+			std::atexit(daijoubu_uid_factory::_delete);
+		}
+
+		_daijoubu_uid_factory::~_daijoubu_uid_factory(void)
 		{
 
 			if(m_initialized) {
@@ -43,32 +136,32 @@ namespace DAIJOUBU {
 		}
 
 		void 
-		_daijoubu_uid::_delete(void)
+		_daijoubu_uid_factory::_delete(void)
 		{
 
-			if(daijoubu_uid::m_instance) {
-				delete daijoubu_uid::m_instance;
-				daijoubu_uid::m_instance = NULL;
+			if(daijoubu_uid_factory::m_instance) {
+				delete daijoubu_uid_factory::m_instance;
+				daijoubu_uid_factory::m_instance = NULL;
 			}
 		}
 
-		daijoubu_uid_ptr 
-		_daijoubu_uid::acquire(void)
+		daijoubu_uid_factory_ptr 
+		_daijoubu_uid_factory::acquire(void)
 		{
 
-			if(!daijoubu_uid::m_instance) {
+			if(!daijoubu_uid_factory::m_instance) {
 
-				daijoubu_uid::m_instance = new daijoubu_uid;
-				if(!daijoubu_uid::m_instance) {
+				daijoubu_uid_factory::m_instance = new daijoubu_uid_factory;
+				if(!daijoubu_uid_factory::m_instance) {
 					THROW_DAIJOUBU_UID_EXCEPTION(DAIJOUBU_UID_EXCEPTION_ALLOCATION);
 				}
 			}
 
-			return daijoubu_uid::m_instance;
+			return daijoubu_uid_factory::m_instance;
 		}
 
 		void 
-		_daijoubu_uid::clear(void)
+		_daijoubu_uid_factory::clear(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -82,8 +175,8 @@ namespace DAIJOUBU {
 		}
 
 		bool 
-		_daijoubu_uid::contains(
-			__in daijoubu_uid_t uid
+		_daijoubu_uid_factory::contains(
+			__in daijoubu_uid uid
 			)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -96,12 +189,12 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_uid::decrement_reference(
-			__in daijoubu_uid_t uid
+		_daijoubu_uid_factory::decrement_reference(
+			__in daijoubu_uid uid
 			)
 		{
 			size_t result;
-			std::map<daijoubu_uid_t, size_t>::iterator iter;
+			std::map<daijoubu_uid, size_t>::iterator iter;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -120,12 +213,12 @@ namespace DAIJOUBU {
 			return result;
 		}
 
-		std::map<daijoubu_uid_t, size_t>::iterator 
-		_daijoubu_uid::find(
-			__in daijoubu_uid_t uid
+		std::map<daijoubu_uid, size_t>::iterator 
+		_daijoubu_uid_factory::find(
+			__in daijoubu_uid uid
 			)
 		{
-			std::map<daijoubu_uid_t, size_t>::iterator result;
+			std::map<daijoubu_uid, size_t>::iterator result;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -142,11 +235,11 @@ namespace DAIJOUBU {
 			return result;
 		}
 
-		daijoubu_uid_t 
-		_daijoubu_uid::generate(void)
+		daijoubu_uid 
+		_daijoubu_uid_factory::generate(void)
 		{
-			daijoubu_uid_t result;
-			std::set<daijoubu_uid_t>::iterator iter;
+			daijoubu_uid result;
+			std::set<daijoubu_uid>::iterator iter;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -164,14 +257,14 @@ namespace DAIJOUBU {
 				THROW_DAIJOUBU_UID_EXCEPTION(DAIJOUBU_UID_EXCEPTION_RESOURCES);
 			}
 
-			m_uid_map.insert(std::pair<daijoubu_uid_t, size_t>(result, UID_REFERENCE_INIT));
+			m_uid_map.insert(std::pair<daijoubu_uid, size_t>(result, REFERENCE_INIT));
 
 			return result;
 		}
 
 		size_t 
-		_daijoubu_uid::increment_reference(
-			__in daijoubu_uid_t uid
+		_daijoubu_uid_factory::increment_reference(
+			__in daijoubu_uid uid
 			)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -184,7 +277,7 @@ namespace DAIJOUBU {
 		}
 
 		void 
-		_daijoubu_uid::initialize(void)
+		_daijoubu_uid_factory::initialize(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -199,21 +292,21 @@ namespace DAIJOUBU {
 		}
 
 		bool 
-		_daijoubu_uid::is_allocated(void)
+		_daijoubu_uid_factory::is_allocated(void)
 		{
-			return (daijoubu_uid::m_instance != NULL);
+			return (daijoubu_uid_factory::m_instance != NULL);
 		}
 
 		bool 
-		_daijoubu_uid::is_initialized(void)
+		_daijoubu_uid_factory::is_initialized(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return m_initialized;
 		}
 
 		size_t 
-		_daijoubu_uid::reference_count(
-			__in daijoubu_uid_t uid
+		_daijoubu_uid_factory::reference_count(
+			__in daijoubu_uid uid
 			)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -226,7 +319,7 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_uid::size(void)
+		_daijoubu_uid_factory::size(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -238,12 +331,12 @@ namespace DAIJOUBU {
 		}
 
 		std::wstring 
-		_daijoubu_uid::to_string(
+		_daijoubu_uid_factory::to_string(
 			__in_opt bool verbose
 			)
 		{
 			std::wstringstream result;
-			std::map<daijoubu_uid_t, size_t>::iterator iter;
+			std::map<daijoubu_uid, size_t>::iterator iter;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -253,7 +346,7 @@ namespace DAIJOUBU {
 			if(verbose) {
 
 				for(iter = m_uid_map.begin(); iter != m_uid_map.end(); ++iter) {
-					result << std::endl << L"{" << VALUE_AS_HEX(daijoubu_uid_t, iter->first) 
+					result << std::endl << L"{" << VALUE_AS_HEX(daijoubu_uid, iter->first) 
 						<< L"}, REFERENCES: " << iter->second;
 				}	
 			}
@@ -262,7 +355,7 @@ namespace DAIJOUBU {
 		}
 
 		void 
-		_daijoubu_uid::uninitialize(void)
+		_daijoubu_uid_factory::uninitialize(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 

@@ -19,7 +19,6 @@
 
 #include <clocale>
 #include <cwctype>
-#include <fstream>
 #include "../include/daijoubu.h"
 #include "../include/daijoubu_lexer_type.h"
 
@@ -30,6 +29,8 @@ namespace DAIJOUBU {
 		#define CHARACTER_END L'\0'
 		#define CHARACTER_LOCALE "en_US.utf8"
 		#define CHARACTER_NEWLINE L'\n'
+		#define CHARACTER_TAB L'\t'
+		#define LEXER_BASE_SENTINEL_COUNT 1
 
 		static const std::wstring DAIJOUBU_CHAR_STR[] = {
 			L"ALPHA", L"DIGIT", L"END", L"SPACE", L"SYMBOL",
@@ -40,14 +41,13 @@ namespace DAIJOUBU {
 			CHECK_STRING(DAIJOUBU_CHAR_STR[_TYPE_]))
 
 		_daijoubu_lexer_base::_daijoubu_lexer_base(
-			__in_opt const std::wstring &input,
-			__in_opt bool is_file
+			__in_opt const std::wstring &input
 			) :
 				m_column(0),
 				m_position(0),
 				m_row(0)
 		{
-			set(input, is_file);
+			set(input);
 		}
 
 		_daijoubu_lexer_base::_daijoubu_lexer_base(
@@ -103,6 +103,56 @@ namespace DAIJOUBU {
 			}
 
 			return m_buffer.at(m_position);
+		}
+
+		std::wstring 
+		_daijoubu_lexer_base::character_exception(
+			__in size_t tab,
+			__in_opt bool verbose
+			)
+		{
+			wchar_t ch;
+			std::wstring ln;
+			size_t iter, position;
+			std::wstringstream result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			ln = line();
+			if(!ln.empty()) {
+				result << ln.substr(0, ln.size() - 1);
+
+				if(verbose) {
+					result << L" (" << m_row << L":" << m_column << L")";
+				}
+
+				result << std::endl;
+
+				for(iter = 0; iter < tab; ++iter) {
+					result << CHARACTER_TAB;
+				}
+
+				position = m_position - m_column;
+
+				for(iter = 0; iter < m_column; ++iter, ++position) {
+
+					if(position >= m_buffer.size()) {
+						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(DAIJOUBU_LEXER_EXCEPTION_INVALID_POSITION,
+							L"Character position: %llu", m_position);
+					}
+
+					ch = m_buffer.at(position);
+					if(ch == CHARACTER_TAB) {
+						result << CHARACTER_TAB;
+					} else {
+						result << L' ';
+					}
+				}
+
+				result << L'^';
+			}
+
+			return CHECK_STRING(result.str());
 		}
 
 		daijoubu_char_t 
@@ -278,8 +328,7 @@ namespace DAIJOUBU {
 
 		void 
 		_daijoubu_lexer_base::set(
-			__in const std::wstring &input,
-			__in_opt bool is_file
+			__in const std::wstring &input
 			)
 		{
 			wchar_t ch;
@@ -289,50 +338,30 @@ namespace DAIJOUBU {
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(!input.empty()) {
+			m_buffer = input + CHARACTER_END;
 
-				if(is_file) {
+			do {
+				ch = m_buffer.at(position);
+				line += ch;
+				++column;
+				++position;
 
-					std::wifstream file(CHECK_STRING(input), std::ios::binary);
-					if(!file) {
-						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(DAIJOUBU_LEXER_EXCEPTION_FILE_NOT_FOUND,
-							L"Path: \'%ws\'", CHECK_STRING(input));
-					}
-
-					contents << file.rdbuf();
-					file.close();
-					m_buffer = contents.str();
-				} else {
-					m_buffer = input;
+				if(ch == CHARACTER_NEWLINE) {
+					break;
 				}
+			} while(ch != CHARACTER_END);
 
-				m_buffer += CHARACTER_END;
+			m_line_map.insert(std::pair<size_t, std::pair<size_t, std::wstring>>(m_row, 
+				std::pair<size_t, std::wstring>(column, line)));
 
-				do {
-					ch = m_buffer.at(position);
-					line += ch;
-					++column;
-					++position;
-
-					if(ch == CHARACTER_NEWLINE) {
-						break;
-					}
-				} while(ch != CHARACTER_END);
-
-				m_line_map.insert(std::pair<size_t, std::pair<size_t, std::wstring>>(m_row, 
-					std::pair<size_t, std::wstring>(column, line)));
-
-				reset();
-			} else {
-				clear();
-			}
+			reset();
 		}
 
 		size_t 
 		_daijoubu_lexer_base::size(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
-			return (m_buffer.size() - 1);
+			return (m_buffer.size() - LEXER_BASE_SENTINEL_COUNT);
 		}
 
 		daijoubu_char_t 
@@ -348,6 +377,7 @@ namespace DAIJOUBU {
 			)
 		{
 			wchar_t ch;
+			std::wstring ln;
 			daijoubu_char_t ch_type;
 			std::wstringstream result;
 
@@ -375,8 +405,14 @@ namespace DAIJOUBU {
 			result << L"\' (" << VALUE_AS_HEX(wchar_t, ch) << L")";
 
 			if(verbose) {
-				result << L": \"" << line().substr(0, line().size() - 1) << L"\" (" << m_row 
-					<< L", " << m_column << L")";
+				result << L":";
+
+				ln = line().substr(0, line().size() - 1);
+				if(!ln.empty()) {
+					result << L" \"" << ln << L"\"";
+				}
+
+				result << L" (" << m_position <<  L", {" << m_row << L", " << m_column << L"})";
 			}
 
 			return CHECK_STRING(result.str());

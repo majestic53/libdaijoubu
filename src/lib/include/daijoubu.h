@@ -36,6 +36,7 @@ using namespace DAIJOUBU;
 #endif // COMPONENT
 
 #include "daijoubu_uid.h"
+#include "daijoubu_token.h"
 
 using namespace DAIJOUBU::COMPONENT;
 
@@ -57,7 +58,9 @@ namespace DAIJOUBU {
 
 			static _daijoubu *acquire(void);
 
-			daijoubu_uid_ptr acquire_uid_factory(void);
+			daijoubu_token_factory_ptr acquire_token_factory(void);
+
+			daijoubu_uid_factory_ptr acquire_uid_factory(void);
 
 			static uint32_t exception_information(
 				__out daijoubu_region_t &region,
@@ -92,7 +95,9 @@ namespace DAIJOUBU {
 
 			static void _delete(void);
 
-			daijoubu_uid_ptr m_factory_uid;
+			daijoubu_token_factory_ptr m_factory_token;
+
+			daijoubu_uid_factory_ptr m_factory_uid;
 
 			bool m_initialized;
 

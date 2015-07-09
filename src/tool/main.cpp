@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <locale>
 #include "../lib/include/daijoubu.h"
 
 int 
@@ -28,7 +29,10 @@ main(void)
 	daijoubu_region_t region;
 	daijoubu_ptr inst = NULL;
 
+	std::setlocale(LC_CTYPE,"");
+
 	try {
+
 		std::wcout << L"libdaijoubu " << daijoubu::version() << std::endl
 			<< L"Copyright (C) 2015 David Jolly" << std::endl;
 
@@ -38,7 +42,7 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer_base base(L"ab\ncd\n01\n;+\n", false);
+		daijoubu_lexer_base base(L"だいじょうぶ。\nabc\n01\n;.\n");
 
 		std::wcout << L"Size: " << base.size() << std::endl;
 

@@ -25,7 +25,8 @@ namespace DAIJOUBU {
 	daijoubu_ptr daijoubu::m_instance = NULL;
 
 	_daijoubu::_daijoubu(void) :
-		m_factory_uid(daijoubu_uid::acquire()),
+		m_factory_token(daijoubu_token_factory::acquire()),
+		m_factory_uid(daijoubu_uid_factory::acquire()),
 		m_initialized(false)
 	{
 		std::atexit(daijoubu::_delete);
@@ -64,7 +65,19 @@ namespace DAIJOUBU {
 		return daijoubu::m_instance;
 	}
 
-	daijoubu_uid_ptr 
+	daijoubu_token_factory_ptr 
+	_daijoubu::acquire_token_factory(void)
+	{
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_DAIJOUBU_EXCEPTION(DAIJOUBU_EXCEPTION_UNINITIALIZED);
+		}
+
+		return m_factory_token;
+	}
+
+	daijoubu_uid_factory_ptr 
 	_daijoubu::acquire_uid_factory(void)
 	{
 		SERIALIZE_CALL_RECUR(m_lock);
@@ -98,11 +111,12 @@ namespace DAIJOUBU {
 			THROW_DAIJOUBU_EXCEPTION(DAIJOUBU_EXCEPTION_INITIALIZED);
 		}
 
+		m_initialized = true;
 		m_factory_uid->initialize();
+		m_factory_token->initialize();
 
 		// TODO
 
-		m_initialized = true;
 	}
 
 	bool 
@@ -128,8 +142,9 @@ namespace DAIJOUBU {
 		SERIALIZE_CALL_RECUR(m_lock);
 
 		result << DAIJOUBU_HEADER << L" [" << (m_initialized ? L"INITIALIZED" : L"UNINITIALIZED")
-			<< L"] (" << VALUE_AS_HEX(uintptr_t, this) << L")" << std::endl 
-			<< m_factory_uid->to_string(verbose);
+			<< L"] (" << VALUE_AS_HEX(uintptr_t, this) << L")" 
+			<< std::endl << m_factory_uid->to_string(verbose)
+			<< std::endl << m_factory_token->to_string(verbose);
 
 		return CHECK_STRING(result.str());
 	}
@@ -143,10 +158,10 @@ namespace DAIJOUBU {
 			THROW_DAIJOUBU_EXCEPTION(DAIJOUBU_EXCEPTION_UNINITIALIZED);
 		}
 
-		m_factory_uid->uninitialize();
-
 		// TODO
 
+		m_factory_token->uninitialize();
+		m_factory_uid->uninitialize();
 		m_initialized = false;
 	}
 

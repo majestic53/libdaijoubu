@@ -61,8 +61,11 @@ namespace DAIJOUBU {
 			THROW_EXCEPTION_MESSAGE(_EXCEPT_, DAIJOUBU_REGION_UID, \
 			DAIJOUBU_UID_EXCEPTION_STRING(_EXCEPT_), _FORMAT_, __VA_ARGS__)
 
-		class _daijoubu_uid;
-		typedef _daijoubu_uid daijoubu_uid, *daijoubu_uid_ptr;
+		class _daijoubu_uid_class;
+		typedef _daijoubu_uid_class daijoubu_uid_class, *daijoubu_uid_class_ptr;
+
+		class _daijoubu_uid_factory;
+		typedef _daijoubu_uid_factory daijoubu_uid_factory, *daijoubu_uid_factory_ptr;
 	}
 }
 

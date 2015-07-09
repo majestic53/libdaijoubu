@@ -28,11 +28,11 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)daijoubu.o $(DIR_BUILD)daijoubu_exception.o $(DIR_BUILD)daijoubu_lexer.o $(DIR_BUILD)daijoubu_uid.o
+	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)daijoubu.o $(DIR_BUILD)daijoubu_exception.o $(DIR_BUILD)daijoubu_lexer.o $(DIR_BUILD)daijoubu_token.o $(DIR_BUILD)daijoubu_uid.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
-build: daijoubu.o daijoubu_exception.o daijoubu_lexer.o daijoubu_uid.o
+build: daijoubu.o daijoubu_exception.o daijoubu_lexer.o daijoubu_token.o daijoubu_uid.o
 
 daijoubu.o: $(DIR_SRC)daijoubu.cpp $(DIR_INC)daijoubu.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu.cpp -o $(DIR_BUILD)daijoubu.o
@@ -41,6 +41,9 @@ daijoubu_exception.o: $(DIR_SRC)daijoubu_exception.cpp $(DIR_INC)daijoubu_except
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu_exception.cpp -o $(DIR_BUILD)daijoubu_exception.o
 
 # COMPONENTS
+
+daijoubu_token.o: $(DIR_SRC)daijoubu_token.cpp $(DIR_INC)daijoubu_token.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu_token.cpp -o $(DIR_BUILD)daijoubu_token.o
 
 daijoubu_uid.o: $(DIR_SRC)daijoubu_uid.cpp $(DIR_INC)daijoubu_uid.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu_uid.cpp -o $(DIR_BUILD)daijoubu_uid.o

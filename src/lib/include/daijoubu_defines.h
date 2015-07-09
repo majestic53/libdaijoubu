@@ -39,12 +39,15 @@ namespace DAIJOUBU {
 #endif // _WIN32
 
 	#define EMPTY L"EMPTY"
+	#define INVALID L"INVALID"
 	#define UNKNOWN L"UNKNOWN"
 
 	#define BUILD_VERSION_MAJOR 0
 	#define BUILD_VERSION_MINOR 1
-	#define BUILD_VERSION_REVISION 1
+	#define BUILD_VERSION_REVISION 2
 	#define BUILD_VERSION_WEEK 1528
+
+	#define REFERENCE_INIT 1
 
 	#define CHECK_STRING(_STRING_) \
 		((_STRING_).empty() ? EMPTY : (_STRING_).c_str())
@@ -52,7 +55,7 @@ namespace DAIJOUBU {
 	#define _CONCAT_STRING(_STRING_) # _STRING_
 	#define CONCAT_STRING(_STRING_) _CONCAT_STRING(_STRING_)
 
-	#define INVALID(_TYPE_) ((_TYPE_) -1)
+	#define INVALID_TYPE(_TYPE_) ((_TYPE_) -1)
 
 	#define _SERIALIZE_CALL(_TYPE_, _MUTEX_) \
 		std::lock_guard<_TYPE_> __lock ## _MUTEX_(_MUTEX_)

@@ -41,8 +41,7 @@ namespace DAIJOUBU {
 			public:
 
 				_daijoubu_lexer_base(
-					__in_opt const std::wstring &input = std::wstring(),
-					__in_opt bool is_file = false
+					__in_opt const std::wstring &input = std::wstring()
 					);
 
 				_daijoubu_lexer_base(
@@ -58,6 +57,11 @@ namespace DAIJOUBU {
 				std::wstring &buffer(void);
 
 				wchar_t character(void);
+
+				std::wstring character_exception(
+					__in size_t tab,
+					__in_opt bool verbose = false
+					);
 
 				static daijoubu_char_t character_type(
 					__in wchar_t input
@@ -84,8 +88,7 @@ namespace DAIJOUBU {
 				size_t row(void);
 
 				void set(
-					__in const std::wstring &input,
-					__in_opt bool is_file = false
+					__in const std::wstring &input
 					);
 
 				size_t size(void);

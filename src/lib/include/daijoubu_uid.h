@@ -27,30 +27,70 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
-		typedef uint64_t daijoubu_uid_t;
+		typedef uint64_t daijoubu_uid;
 
-		#define INVALID_UID INVALID(daijoubu_uid_t)
+		#define INVALID_UID INVALID_TYPE(daijoubu_uid)
 
-		typedef class _daijoubu_uid {
+		typedef class _daijoubu_uid_class {
 
 			public:
 
-				~_daijoubu_uid(void);
+				_daijoubu_uid_class(void);
 
-				static _daijoubu_uid *acquire(void);
+				_daijoubu_uid_class(
+					__in const _daijoubu_uid_class &other
+					);
+
+				virtual ~_daijoubu_uid_class(void);
+
+				_daijoubu_uid_class &operator=(
+					__in const _daijoubu_uid_class &other
+					);
+
+				bool operator==(
+					__in const _daijoubu_uid_class &other
+					);
+
+				bool operator!=(
+					__in const _daijoubu_uid_class &other
+					);
+
+				virtual std::wstring to_string(
+					__in_opt bool verbose = false
+					);
+
+				daijoubu_uid uid(void);
+
+			protected:
+
+				daijoubu_uid m_uid;
+
+			private:
+
+				std::recursive_mutex m_lock;
+
+		} daijoubu_uid_class, *daijoubu_uid_class_ptr;
+
+		typedef class _daijoubu_uid_factory {
+
+			public:
+
+				~_daijoubu_uid_factory(void);
+
+				static _daijoubu_uid_factory *acquire(void);
 
 				bool contains(
-					__in daijoubu_uid_t uid
+					__in daijoubu_uid uid
 					);
 
 				size_t decrement_reference(
-					__in daijoubu_uid_t uid
+					__in daijoubu_uid uid
 					);
 
-				daijoubu_uid_t generate(void);
+				daijoubu_uid generate(void);
 
 				size_t increment_reference(
-					__in daijoubu_uid_t uid
+					__in daijoubu_uid uid
 					);
 
 				void initialize(void);
@@ -60,7 +100,7 @@ namespace DAIJOUBU {
 				bool is_initialized(void);
 
 				size_t reference_count(
-					__in daijoubu_uid_t uid
+					__in daijoubu_uid uid
 					);
 
 				size_t size(void);
@@ -73,39 +113,39 @@ namespace DAIJOUBU {
 
 			protected:
 
-				_daijoubu_uid(void);
+				_daijoubu_uid_factory(void);
 
-				_daijoubu_uid(
-					__in const _daijoubu_uid &other
+				_daijoubu_uid_factory(
+					__in const _daijoubu_uid_factory &other
 					);
 
-				_daijoubu_uid &operator=(
-					__in const _daijoubu_uid &other
+				_daijoubu_uid_factory &operator=(
+					__in const _daijoubu_uid_factory &other
 					);
 
 				static void _delete(void);
 
 				void clear(void);
 
-				std::map<daijoubu_uid_t, size_t>::iterator find(
-					__in daijoubu_uid_t uid
+				std::map<daijoubu_uid, size_t>::iterator find(
+					__in daijoubu_uid uid
 					);
 
 				bool m_initialized;
 
-				static _daijoubu_uid *m_instance;
+				static _daijoubu_uid_factory *m_instance;
 
-				std::map<daijoubu_uid_t, size_t> m_uid_map;
+				std::map<daijoubu_uid, size_t> m_uid_map;
 
-				daijoubu_uid_t m_uid_next;
+				daijoubu_uid m_uid_next;
 
-				std::set<daijoubu_uid_t> m_uid_surplus;
+				std::set<daijoubu_uid> m_uid_surplus;
 
 			private:
 
 				std::recursive_mutex m_lock;
 
-		} daijoubu_uid, *daijoubu_uid_ptr;
+		} daijoubu_uid_factory, *daijoubu_uid_factory_ptr;
 	}
 }
 
