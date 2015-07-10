@@ -60,10 +60,10 @@ namespace DAIJOUBU {
 			DAIJOUBU_TOKEN_EXCEPTION_STRING(_EXCEPT_), _FORMAT_, __VA_ARGS__)
 
 		class _daijoubu_token;
-		typedef _daijoubu_token _daijoubu_token, *_daijoubu_token_ptr;
+		typedef _daijoubu_token daijoubu_token, *daijoubu_token_ptr;
 
 		class _daijoubu_token_factory;
-		typedef _daijoubu_token_factory _daijoubu_token_factory, *_daijoubu_token_factory_ptr;
+		typedef _daijoubu_token_factory daijoubu_token_factory, *daijoubu_token_factory_ptr;
 	}
 }
 

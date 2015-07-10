@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1528
+*Updated: 7/9/2015*
+
+* Added lexer/lexer base classes
+
 *Updated: 7/8/2015*
 
 * Added uid/token factories

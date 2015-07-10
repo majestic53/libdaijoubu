@@ -37,6 +37,7 @@ namespace DAIJOUBU {
 			__in_opt uint16_t subtype
 			) :
 				m_column(0),
+				m_offset(0),
 				m_position(0),
 				m_row(0),
 				m_subtype(subtype),
@@ -51,6 +52,7 @@ namespace DAIJOUBU {
 				daijoubu_uid_class(other),
 				m_column(other.m_column),
 				m_line(other.m_line),
+				m_offset(other.m_offset),
 				m_position(other.m_position),
 				m_row(other.m_row),
 				m_subtype(other.m_subtype),
@@ -76,6 +78,7 @@ namespace DAIJOUBU {
 				daijoubu_uid_class::operator=(other);
 				m_column = other.m_column;
 				m_line = other.m_line;
+				m_offset = other.m_offset;
 				m_position = other.m_position;
 				m_row = other.m_row;
 				m_subtype = other.m_subtype;
@@ -101,6 +104,7 @@ namespace DAIJOUBU {
 					&& (m_column == other.m_column)
 					&& (m_line == other.m_line)
 					&& (m_position == other.m_position)
+					&& (m_offset == other.m_offset)
 					&& (m_row == other.m_row)
 					&& (m_subtype == other.m_subtype)
 					&& (m_text == other.m_text)
@@ -131,6 +135,13 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return m_line;
+		}
+
+		size_t &
+		_daijoubu_token::offset(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_offset;
 		}
 
 		size_t &
@@ -200,7 +211,7 @@ namespace DAIJOUBU {
 				result << L":";
 
 				if(!token.m_line.empty()) {
-					result << L" \"" << token.m_line << L"\"";
+					result << L" \"" << token.m_line << L"\"[" << token.m_offset << L"]";
 				}
 
 				result << L" (" << token.m_position << L", {"

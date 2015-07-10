@@ -35,7 +35,9 @@ namespace DAIJOUBU {
 		enum {
 			DAIJOUBU_LEXER_EXCEPTION_INVALID_POSITION = 0,
 			DAIJOUBU_LEXER_EXCEPTION_NO_NEXT_CHARACTER,
+			DAIJOUBU_LEXER_EXCEPTION_NO_NEXT_TOKEN,
 			DAIJOUBU_LEXER_EXCEPTION_NO_PREVIOUS_CHARACTER,
+			DAIJOUBU_LEXER_EXCEPTION_NO_PREVIOUS_TOKEN,
 			DAIJOUBU_LEXER_EXCEPTION_ROW_NOT_FOUND,
 		};
 
@@ -44,7 +46,9 @@ namespace DAIJOUBU {
 		static const std::wstring DAIJOUBU_LEXER_EXCEPTION_STR[] = {
 			DAIJOUBU_LEXER_EXCEPTION_HEADER L" Invalid position",
 			DAIJOUBU_LEXER_EXCEPTION_HEADER L" No next character exists",
+			DAIJOUBU_LEXER_EXCEPTION_HEADER L" No next token exists",
 			DAIJOUBU_LEXER_EXCEPTION_HEADER L" No previous character exists",
+			DAIJOUBU_LEXER_EXCEPTION_HEADER L" No previous token exists",
 			DAIJOUBU_LEXER_EXCEPTION_HEADER L" Row does not exist",
 			};
 
@@ -61,6 +65,9 @@ namespace DAIJOUBU {
 
 		class _daijoubu_lexer_base;
 		typedef _daijoubu_lexer_base daijoubu_lexer_base, *daijoubu_lexer_base_ptr;
+
+		class _daijoubu_lexer;
+		typedef _daijoubu_lexer daijoubu_lexer, *daijoubu_lexer_ptr;
 	}
 }
 

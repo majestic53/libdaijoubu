@@ -21,6 +21,7 @@
 #define DAIJOUBU_LEXER_H_
 
 #include <map>
+#include <vector>
 
 namespace DAIJOUBU {
 
@@ -54,46 +55,50 @@ namespace DAIJOUBU {
 					__in const _daijoubu_lexer_base &other
 					);
 
-				std::wstring &buffer(void);
-
 				wchar_t character(void);
+
+				std::wstring &character_buffer(void);
+
+				size_t character_column(void);
 
 				std::wstring character_exception(
 					__in size_t tab,
 					__in_opt bool verbose = false
 					);
 
-				static daijoubu_char_t character_type(
+				std::wstring character_line(void);
+
+				size_t character_position(void);
+
+				size_t character_row(void);
+
+				static daijoubu_char_t character_to_type(
 					__in wchar_t input
 					);
 
-				void clear(void);
+				daijoubu_char_t character_type(void);
 
-				size_t column(void);
+				static std::wstring character_as_string(
+					__in daijoubu_char_t type
+					);
 
-				bool has_next(void);
+				virtual void clear(void);
 
-				bool has_previous(void);
+				bool has_next_character(void);
 
-				std::wstring line(void);
+				bool has_previous_character(void);
 
-				wchar_t move_next(void);
+				wchar_t move_next_character(void);
 
-				wchar_t move_previous(void);
+				wchar_t move_previous_character(void);
 
-				size_t position(void);
+				virtual void reset(void);
 
-				void reset(void);
-
-				size_t row(void);
-
-				void set(
+				virtual void set(
 					__in const std::wstring &input
 					);
 
-				size_t size(void);
-
-				daijoubu_char_t type(void);
+				virtual size_t size(void);
 
 				virtual std::wstring to_string(
 					__in_opt bool verbose = false
@@ -105,21 +110,107 @@ namespace DAIJOUBU {
 					__in size_t row
 					);
 
-				std::wstring m_buffer;
+				std::wstring m_ch_buffer;
 
-				size_t m_column;
+				size_t m_ch_column;
 
-				std::map<size_t, std::pair<size_t, std::wstring>> m_line_map;
+				std::map<size_t, std::pair<size_t, std::wstring>> m_ch_line_map;
 
-				size_t m_position;
+				size_t m_ch_position;
 
-				size_t m_row;
+				size_t m_ch_row;
 
 			private:
 
 				std::recursive_mutex m_lock;
 
 		} daijoubu_lexer_base, *daijoubu_lexer_base_ptr;
+
+		typedef class _daijoubu_lexer :
+				protected daijoubu_lexer_base {
+
+			public:
+
+				_daijoubu_lexer(
+					__in_opt const std::wstring &input = std::wstring()
+					);
+
+				_daijoubu_lexer(
+					__in const _daijoubu_lexer &other
+					);
+
+				virtual ~_daijoubu_lexer(void);
+
+				_daijoubu_lexer &operator=(
+					__in const _daijoubu_lexer &other
+					);
+
+				virtual void clear(void);
+
+				bool has_next_token(void);
+
+				bool has_previous_token(void);
+
+				daijoubu_token &move_next_token(void);
+
+				daijoubu_token &move_previous_token(void);
+
+				virtual void reset(void);
+
+				virtual void set(
+					__in const std::wstring &input
+					);
+
+				virtual size_t size(void);
+
+				virtual std::wstring to_string(
+					__in_opt bool verbose = false
+					);
+
+				daijoubu_token &token(void);
+
+				static std::wstring token_as_string(
+					__in daijoubu_token &token,
+					__in_opt bool verbose = false
+					);
+
+				std::wstring token_exception(
+					__in size_t tab,
+					__in_opt bool verbose = false
+					);
+
+				size_t token_position(void);
+
+			protected:
+
+				daijoubu_uid token_add(
+					__in_opt daijoubu_token_t type = INVALID_TOKEN_TYPE,
+					__in_opt uint16_t subtype = INVALID_TOKEN_SUBTYPE,
+					__in_opt const std::wstring &text = std::wstring(),
+					__in_opt const std::wstring &line = std::wstring(),
+					__in_opt size_t offset = 0,
+					__in_opt size_t position = 0,
+					__in_opt size_t column = 0,
+					__in_opt size_t row = 0
+					);
+
+				daijoubu_token &token_at(
+					__in size_t position
+					);
+
+				void token_remove(
+					__in size_t position
+					);
+
+				std::vector<daijoubu_uid> m_tok_list;
+	
+				size_t m_tok_position;
+
+			private:
+
+				std::recursive_mutex m_lock;
+
+		} daijoubu_lexer, *daijoubu_lexer_ptr;
 	}
 }
 

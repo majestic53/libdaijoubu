@@ -42,27 +42,27 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer_base base(L"だいじょうぶ。\nabc\n01\n;.\n");
+		daijoubu_lexer lex(L"だいじょうぶ。\nabc\n01\n;.\n");
 
-		std::wcout << L"Size: " << base.size() << std::endl;
+		std::wcout << L"Size: " << lex.size() << std::endl;
 
-		while(base.has_next()) {
-			std::wcout << base.to_string(true) << std::endl;
-			base.move_next();
+		while(lex.has_next_token()) {
+			std::wcout << lex.to_string(true) << std::endl;
+			lex.move_next_token();
 		}
 
-		std::wcout << base.to_string(true) << std::endl;
+		std::wcout << lex.to_string(true) << std::endl;
 
-		while(base.has_previous()) {
-			base.move_previous();
-			std::wcout << base.to_string(true) << std::endl;
+		while(lex.has_previous_token()) {
+			lex.move_previous_token();
+			std::wcout << lex.to_string(true) << std::endl;
 		}
 
 		inst->uninitialize();
 		//std::wcout << inst->to_string(true) << std::endl;
 	} catch(std::runtime_error &exc) {
 		id = daijoubu::exception_information(region, message);
-		std::wcerr << message << std::endl;
+		std::wcerr << L"[" << VALUE_AS_HEX(uint32_t, id) << "]" << message << std::endl;
 		result = -1;
 	}
 

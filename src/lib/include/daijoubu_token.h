@@ -67,6 +67,8 @@ namespace DAIJOUBU {
 
 				std::wstring &line(void);
 
+				size_t &offset(void);
+
 				size_t &position(void);
 
 				size_t &row(void);
@@ -91,6 +93,8 @@ namespace DAIJOUBU {
 				size_t m_column;
 
 				std::wstring m_line;
+
+				size_t m_offset;
 
 				size_t m_position;
 
