@@ -44,7 +44,7 @@ namespace DAIJOUBU {
 
 	#define BUILD_VERSION_MAJOR 0
 	#define BUILD_VERSION_MINOR 1
-	#define BUILD_VERSION_REVISION 3
+	#define BUILD_VERSION_REVISION 4
 	#define BUILD_VERSION_WEEK 1528
 
 	#define REFERENCE_INIT 1
@@ -52,7 +52,7 @@ namespace DAIJOUBU {
 	#define CHECK_STRING(_STRING_) \
 		((_STRING_).empty() ? EMPTY : (_STRING_).c_str())
 
-	#define _CONCAT_STRING(_STRING_) # _STRING_
+	#define _CONCAT_STRING(_STRING_) L ## # _STRING_
 	#define CONCAT_STRING(_STRING_) _CONCAT_STRING(_STRING_)
 
 	#define INVALID_TYPE(_TYPE_) ((_TYPE_) -1)
@@ -64,9 +64,7 @@ namespace DAIJOUBU {
 	#define SERIALIZE_CALL_RECUR(_MUTEX_) \
 		_SERIALIZE_CALL(std::recursive_mutex, _MUTEX_)
 
-#ifndef _WIN32
 	#define UNREFERENCE_PARAMETER(_PARAM_) (void) _PARAM_
-#endif // _WIN32
 
 	#define VALUE_AS_HEX(_TYPE_, _VALUE_) \
 		std::setw(sizeof(_TYPE_) * 2) << std::setfill(L'0') << std::hex \

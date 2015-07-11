@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1528
+*Updated 7/10/2015*
+
+* Minor code cleanup
+
 *Updated: 7/9/2015*
 
 * Added lexer/lexer base classes

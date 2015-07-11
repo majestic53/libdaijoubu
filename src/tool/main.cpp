@@ -60,7 +60,7 @@ main(void)
 
 		inst->uninitialize();
 		//std::wcout << inst->to_string(true) << std::endl;
-	} catch(std::runtime_error &exc) {
+	} catch(std::runtime_error &) {
 		id = daijoubu::exception_information(region, message);
 		std::wcerr << L"[" << VALUE_AS_HEX(uint32_t, id) << "]" << message << std::endl;
 		result = -1;

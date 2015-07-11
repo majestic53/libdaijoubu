@@ -147,6 +147,8 @@ namespace DAIJOUBU {
 
 				virtual void clear(void);
 
+				virtual void discover(void);
+
 				bool has_next_token(void);
 
 				bool has_previous_token(void);

@@ -474,6 +474,18 @@ namespace DAIJOUBU {
 			m_tok_position = 0;
 		}
 
+		void 
+		_daijoubu_lexer::discover(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			while(has_next_token()) {
+				move_next_token();
+			}
+
+			daijoubu_lexer::reset();
+		}
+
 		bool 
 		_daijoubu_lexer::has_next_token(void)
 		{
@@ -498,7 +510,10 @@ namespace DAIJOUBU {
 					L"Token position: %llu", m_tok_position);
 			}
 
-			if(m_tok_position == daijoubu_lexer::size()) {
+			// TODO: skip whitespace
+
+			if(has_next_character()
+					&& (m_tok_position == daijoubu_lexer::size())) {
 
 				// TODO: enumerate tokens
 
@@ -537,6 +552,7 @@ namespace DAIJOUBU {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			daijoubu_lexer::clear();
+			daijoubu_lexer_base::set(input);
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_BEGIN));
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_END));
 		}
