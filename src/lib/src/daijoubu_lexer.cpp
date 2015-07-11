@@ -24,10 +24,9 @@ namespace DAIJOUBU {
 
 	namespace LANGUAGE {
 
-		#define CHARACTER_END L'\0'
-		#define CHARACTER_LOCALE "en_US.utf8"
-		#define CHARACTER_NEWLINE L'\n'
-		#define CHARACTER_TAB L'\t'
+		#define CHARACTER_END DAIJOUBU_CHARACTER(L'\0')
+		#define CHARACTER_NEWLINE DAIJOUBU_CHARACTER(L'\n')
+		#define CHARACTER_TAB DAIJOUBU_CHARACTER(L'\t')
 		#define LEXER_BASE_SENTINEL_COUNT 1
 		#define LEXER_SENTINEL_COUNT 2
 
@@ -510,12 +509,16 @@ namespace DAIJOUBU {
 					L"Token position: %llu", m_tok_position);
 			}
 
-			// TODO: skip whitespace
+			skip_whitespace();
 
 			if(has_next_character()
 					&& (m_tok_position == daijoubu_lexer::size())) {
 
 				// TODO: enumerate tokens
+				m_tok_list.insert(m_tok_list.begin() + m_tok_position + 1, token_add(DAIJOUBU_TOKEN_IDENTIFIER));				
+				token_at(m_tok_position + 1).text() = std::wstring(1, character());
+				daijoubu_lexer_base::move_next_character();
+				// ---
 
 			}
 
@@ -557,6 +560,77 @@ namespace DAIJOUBU {
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_END));
 		}
 
+		void 
+		_daijoubu_lexer::skip_comment_block(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+
+				do {
+
+					if(!has_next_character()) {
+						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+							DAIJOUBU_LEXER_EXCEPTION_UNTERMINATED_COMMENT,
+							L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+					}
+
+					if(move_next_character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+						skip_comment_block();
+					}
+				} while(character() != DAIJOUBU_COMMENT_BLOCK_CLOSE);
+
+				if(!has_next_character()) {
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_UNTERMINATED_COMMENT,
+						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+				}
+
+				move_next_character();
+			}
+		}
+
+		void 
+		_daijoubu_lexer::skip_comment_line(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(character() == DAIJOUBU_COMMENT_LINE) {
+
+				do {
+
+					if(!has_next_character()) {
+						break;
+					}
+
+					move_next_character();
+				} while(character() != CHARACTER_NEWLINE);
+
+				if(has_next_character()) {
+					move_next_character();
+				}
+			}
+		}
+
+		void 
+		_daijoubu_lexer::skip_whitespace(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			while(character_type() == DAIJOUBU_CHAR_SPACE) {
+				move_next_character();
+			}
+
+			skip_comment_block();
+			skip_comment_line();
+
+			if((character_type() == DAIJOUBU_CHAR_SPACE)
+					|| (character() == DAIJOUBU_COMMENT_BLOCK_OPEN)
+					|| (character() == DAIJOUBU_COMMENT_LINE)) {
+				skip_whitespace();
+			}
+		}
+
 		size_t 
 		_daijoubu_lexer::size(void)
 		{
@@ -595,6 +669,7 @@ namespace DAIJOUBU {
 			__in_opt daijoubu_token_t type,
 			__in_opt uint16_t subtype,
 			__in_opt const std::wstring &text,
+			__in_opt long double value,
 			__in_opt const std::wstring &line,
 			__in_opt size_t offset,
 			__in_opt size_t position,
@@ -611,6 +686,7 @@ namespace DAIJOUBU {
 			result = fact->generate(type, subtype);
 			daijoubu_token &tok = fact->at(result);
 			tok.text() = text;
+			tok.value() = value;
 			tok.line() = line;
 			tok.offset() = offset;
 			tok.position() = position;

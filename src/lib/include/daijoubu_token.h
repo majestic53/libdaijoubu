@@ -29,9 +29,10 @@ namespace DAIJOUBU {
 		typedef enum {
 			DAIJOUBU_TOKEN_BEGIN = 0,
 			DAIJOUBU_TOKEN_END,
+			DAIJOUBU_TOKEN_IDENTIFIER,
 		} daijoubu_token_t;
 
-		#define DAIJOUBU_TOKEN_MAX DAIJOUBU_TOKEN_END
+		#define DAIJOUBU_TOKEN_MAX DAIJOUBU_TOKEN_IDENTIFIER
 		#define INVALID_TOKEN_SUBTYPE INVALID_TYPE(uint16_t)
 		#define INVALID_TOKEN_TYPE INVALID_TYPE(daijoubu_token_t)
 
@@ -88,6 +89,8 @@ namespace DAIJOUBU {
 
 				daijoubu_token_t &type(void);
 
+				long double &value(void);
+
 			protected:
 
 				size_t m_column;
@@ -105,6 +108,8 @@ namespace DAIJOUBU {
 				std::wstring m_text;
 
 				daijoubu_token_t m_type;
+
+				long double m_value;
 
 			private:
 

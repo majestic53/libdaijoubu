@@ -185,10 +185,17 @@ namespace DAIJOUBU {
 
 			protected:
 
+				void skip_comment_block(void);
+
+				void skip_comment_line(void);
+
+				void skip_whitespace(void);
+
 				daijoubu_uid token_add(
 					__in_opt daijoubu_token_t type = INVALID_TOKEN_TYPE,
 					__in_opt uint16_t subtype = INVALID_TOKEN_SUBTYPE,
 					__in_opt const std::wstring &text = std::wstring(),
+					__in_opt long double value = 0.0,
 					__in_opt const std::wstring &line = std::wstring(),
 					__in_opt size_t offset = 0,
 					__in_opt size_t position = 0,

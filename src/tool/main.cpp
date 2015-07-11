@@ -42,7 +42,7 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer lex(L"だいじょうぶ。\nabc\n01\n;.\n");
+		daijoubu_lexer lex(L"【abc】bc【de\n】※f\n\n【】\n※※※");
 
 		std::wcout << L"Size: " << lex.size() << std::endl;
 

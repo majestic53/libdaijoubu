@@ -44,6 +44,7 @@ using namespace DAIJOUBU::COMPONENT;
 #define LANGUAGE lang
 #endif // LANGUAGE
 
+#include "daijoubu_language.h"
 #include "daijoubu_lexer.h"
 
 using namespace DAIJOUBU::LANGUAGE;

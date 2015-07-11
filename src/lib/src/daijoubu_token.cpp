@@ -25,7 +25,7 @@ namespace DAIJOUBU {
 	namespace COMPONENT {
 
 		static const std::wstring DAIJOUBU_TOKEN_STR[] = {
-			L"BEGIN", L"END",
+			L"BEGIN", L"END", L"IDENTIFIER",
 			};
 
 		#define DAIJOUBU_TOKEN_STRING(_TYPE_) \
@@ -41,7 +41,8 @@ namespace DAIJOUBU {
 				m_position(0),
 				m_row(0),
 				m_subtype(subtype),
-				m_type(type)
+				m_type(type),
+				m_value(0.0)
 		{
 			return;
 		}
@@ -57,7 +58,8 @@ namespace DAIJOUBU {
 				m_row(other.m_row),
 				m_subtype(other.m_subtype),
 				m_text(other.m_text),
-				m_type(other.m_type)
+				m_type(other.m_type),
+				m_value(other.m_value)
 		{
 			return;
 		}
@@ -84,6 +86,7 @@ namespace DAIJOUBU {
 				m_subtype = other.m_subtype;
 				m_text = other.m_text;
 				m_type = other.m_type;
+				m_value = other.m_value;
 			}
 
 			return *this;
@@ -108,7 +111,8 @@ namespace DAIJOUBU {
 					&& (m_row == other.m_row)
 					&& (m_subtype == other.m_subtype)
 					&& (m_text == other.m_text)
-					&& (m_type == other.m_type));
+					&& (m_type == other.m_type)
+					&& (m_value == other.m_value));
 			}
 
 			return result;
@@ -207,6 +211,15 @@ namespace DAIJOUBU {
 				result << L" \'" << token.m_text << L"\'";
 			}
 
+			switch(token.m_type) {
+				case DAIJOUBU_TOKEN_BEGIN:
+				case DAIJOUBU_TOKEN_END:
+					break;
+				default:
+					result << L" " << token.m_value;
+					break;
+			}
+
 			if(verbose) {
 				result << L":";
 
@@ -226,6 +239,13 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return m_type;
+		}
+
+		long double &
+		_daijoubu_token::value(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_value;
 		}
 
 		daijoubu_token_factory_ptr daijoubu_token_factory::m_instance = NULL;
