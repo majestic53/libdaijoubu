@@ -35,6 +35,7 @@ using namespace DAIJOUBU;
 #define COMPONENT comp
 #endif // COMPONENT
 
+#include "daijoubu_unicode.h"
 #include "daijoubu_uid.h"
 #include "daijoubu_token.h"
 
@@ -78,6 +79,8 @@ namespace DAIJOUBU {
 				__in_opt bool verbose = false
 				);
 
+			daijoubu_unicode_ptr unicode(void);
+
 			void uninitialize(void);
 
 			static std::wstring version(void);
@@ -99,6 +102,8 @@ namespace DAIJOUBU {
 			daijoubu_token_factory_ptr m_factory_token;
 
 			daijoubu_uid_factory_ptr m_factory_uid;
+
+			daijoubu_unicode_ptr m_unicode;
 
 			bool m_initialized;
 

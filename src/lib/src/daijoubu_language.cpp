@@ -17,30 +17,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DAIJOUBU_LANGUAGE_H_
-#define DAIJOUBU_LANGUAGE_H_
+#include "../include/daijoubu.h"
+#include "../include/daijoubu_language_type.h"
 
 namespace DAIJOUBU {
 
 	namespace LANGUAGE {
 
-		#define DAIJOUBU_CHARACTER(_CH_) ((wchar_t) _CH_)
-		#define DAIJOUBU_COMMENT_LINE DAIJOUBU_CHARACTER(L'※')
-		#define DAIJOUBU_COMMENT_BLOCK_CLOSE DAIJOUBU_CHARACTER(L'】')
-		#define DAIJOUBU_COMMENT_BLOCK_OPEN DAIJOUBU_CHARACTER(L'【')
+		static const char LANGUAGE_CHAR[] = {
+			'0', '1', '2', '3', '4', '5', '6', '7', 
+			'8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+			};
 
-		typedef enum {
-			DAIJOUBU_RADIX_BINARY = 0,
-			DAIJOUBU_RADIX_DECIMAL,
-			DAIJOUBU_RADIX_HEXIDECIMAL,
-			DAIJOUBU_RADIX_OCTAL,
-		} daijoubu_radix_t;
+		static const LANGUAGE_SCALE[] = {
+			
+			};
 
-		extern wchar_t string_as_wchar(
+		wchar_t 
+		string_as_wchar(
 			__in const std::wstring &input,
 			__in daijoubu_radix_t radix
-			);
+			)
+		{
+			wchar_t result = 0;
+
+			switch(radix) {
+				case DAIJOUBU_RADIX_BINARY:
+				case DAIJOUBU_RADIX_DECIMAL:
+				case DAIJOUBU_RADIX_HEXIDECIMAL:
+				case DAIJOUBU_RADIX_OCTAL:
+
+					// TODO
+					break;
+				default:
+					THROW_DAIJOUBU_LANGUAGE_EXCEPTION_MESSAGE(DAIJOUBU_LANGUAGE_EXCEPTION_INVALID_RADIX,
+						L"%lu", radix);
+			}
+
+			return result;
+		}
 	}
 }
-
-#endif // DAIJOUBU_LANGUAGE_H_

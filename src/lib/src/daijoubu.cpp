@@ -22,11 +22,14 @@
 
 namespace DAIJOUBU {
 
+	#define UNICODE_RESOURCE_PATH "./res/unicode.txt"
+
 	daijoubu_ptr daijoubu::m_instance = NULL;
 
 	_daijoubu::_daijoubu(void) :
 		m_factory_token(daijoubu_token_factory::acquire()),
 		m_factory_uid(daijoubu_uid_factory::acquire()),
+		m_unicode(daijoubu_unicode::acquire()),
 		m_initialized(false)
 	{
 		std::atexit(daijoubu::_delete);
@@ -112,6 +115,7 @@ namespace DAIJOUBU {
 		}
 
 		m_initialized = true;
+		m_unicode->initialize(UNICODE_RESOURCE_PATH);
 		m_factory_uid->initialize();
 		m_factory_token->initialize();
 
@@ -143,10 +147,23 @@ namespace DAIJOUBU {
 
 		result << DAIJOUBU_HEADER << L" [" << (m_initialized ? L"INITIALIZED" : L"UNINITIALIZED")
 			<< L"] (" << VALUE_AS_HEX(uintptr_t, this) << L")" 
+			<< std::endl << m_unicode->to_string(verbose) 
 			<< std::endl << m_factory_uid->to_string(verbose)
 			<< std::endl << m_factory_token->to_string(verbose);
 
 		return CHECK_STRING(result.str());
+	}
+
+	daijoubu_unicode_ptr 
+	_daijoubu::unicode(void)
+	{
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_DAIJOUBU_EXCEPTION(DAIJOUBU_EXCEPTION_UNINITIALIZED);
+		}
+
+		return m_unicode;
 	}
 
 	void 
@@ -162,6 +179,7 @@ namespace DAIJOUBU {
 
 		m_factory_token->uninitialize();
 		m_factory_uid->uninitialize();
+		m_unicode->uninitialize();
 		m_initialized = false;
 	}
 
