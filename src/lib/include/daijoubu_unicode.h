@@ -48,7 +48,7 @@ namespace DAIJOUBU {
 			DAIJOUBU_UNICODE_CLASS_PD,
 			DAIJOUBU_UNICODE_CLASS_PE,
 			DAIJOUBU_UNICODE_CLASS_PF,
-			DAIJOUBU_UNICODE_CLASS_PL,
+			DAIJOUBU_UNICODE_CLASS_PI,
 			DAIJOUBU_UNICODE_CLASS_PO,
 			DAIJOUBU_UNICODE_CLASS_PS,
 			DAIJOUBU_UNICODE_CLASS_SC,
@@ -62,6 +62,17 @@ namespace DAIJOUBU {
 
 		#define DAIJOUBU_UNICODE_CLASS_MAX DAIJOUBU_UNICODE_CLASS_ZS
 
+		static const std::string DAIJOUBU_UNICODE_CLASS_STR[] {
+			"Cc", "Cf", "Cn", "Co", "Cs", "Lc", "Ll", "Lm",
+			"Lo", "Lt", "Lu", "Mc", "Me", "Mn", "Nd", "Nl",
+			"No", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps", 
+			"Sc", "Sk", "Sm", "So", "Zl", "Zp", "Zs",
+		};
+
+		#define DAIJOUBU_UNICODE_CLASS_STRING(_TYPE_) \
+			((_TYPE_) > DAIJOUBU_UNICODE_CLASS_MAX ? std::string() : \
+			DAIJOUBU_UNICODE_CLASS_STR[_TYPE_].c_str())
+
 		typedef class _daijoubu_unicode {
 
 			public:
@@ -69,6 +80,10 @@ namespace DAIJOUBU {
 				~_daijoubu_unicode(void);
 
 				static _daijoubu_unicode *acquire(void);
+
+				daijoubu_unicode_t character_class(
+					__in wchar_t character
+					);
 
 				bool contains(
 					__in wchar_t character
@@ -82,12 +97,12 @@ namespace DAIJOUBU {
 
 				bool is_initialized(void);
 
-				std::wstring to_string(
-					__in_opt bool verbose = false
+				static bool is_whitespace(
+					__in daijoubu_unicode_t type
 					);
 
-				daijoubu_unicode_t type(
-					__in wchar_t character
+				std::wstring to_string(
+					__in_opt bool verbose = false
 					);
 
 				void uninitialize(void);

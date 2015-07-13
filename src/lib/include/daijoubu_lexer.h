@@ -27,16 +27,6 @@ namespace DAIJOUBU {
 
 	namespace LANGUAGE {
 
-		typedef enum {
-			DAIJOUBU_CHAR_ALPHA = 0,
-			DAIJOUBU_CHAR_DIGIT,
-			DAIJOUBU_CHAR_END,
-			DAIJOUBU_CHAR_SPACE,
-			DAIJOUBU_CHAR_SYMBOL,
-		} daijoubu_char_t;
-
-		#define DAIJOUBU_CHAR_MAX DAIJOUBU_CHAR_SYMBOL
-
 		typedef class _daijoubu_lexer_base {
 
 			public:
@@ -59,6 +49,8 @@ namespace DAIJOUBU {
 
 				std::wstring &character_buffer(void);
 
+				daijoubu_unicode_t character_class(void);
+
 				size_t character_column(void);
 
 				std::wstring character_exception(
@@ -72,14 +64,8 @@ namespace DAIJOUBU {
 
 				size_t character_row(void);
 
-				static daijoubu_char_t character_to_type(
+				static daijoubu_unicode_t character_to_class(
 					__in wchar_t input
-					);
-
-				daijoubu_char_t character_type(void);
-
-				static std::wstring character_as_string(
-					__in daijoubu_char_t type
 					);
 
 				virtual void clear(void);

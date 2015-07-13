@@ -30,14 +30,17 @@ namespace DAIJOUBU {
 		#define DAIJOUBU_COMMENT_BLOCK_OPEN DAIJOUBU_CHARACTER(L'【')
 
 		typedef enum {
-			DAIJOUBU_RADIX_BINARY = 0,
+			DAIJOUBU_RADIX_36 = 0,
+			DAIJOUBU_RADIX_BINARY,
 			DAIJOUBU_RADIX_DECIMAL,
 			DAIJOUBU_RADIX_HEXIDECIMAL,
 			DAIJOUBU_RADIX_OCTAL,
 		} daijoubu_radix_t;
 
-		extern wchar_t string_as_wchar(
-			__in const std::wstring &input,
+		#define DAIJOUBU_RADIX_MAX DAIJOUBU_RADIX_OCTAL
+
+		extern uint32_t string_as_value(
+			__in const std::string &input,
 			__in daijoubu_radix_t radix
 			);
 	}

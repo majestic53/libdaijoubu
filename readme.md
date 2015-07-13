@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1528
+*Updated 7/12/2015*
+
+* Added unicode support
+
 *Updated 7/10/2015*
 
 * Minor code cleanup

@@ -30,14 +30,6 @@ namespace DAIJOUBU {
 		#define LEXER_BASE_SENTINEL_COUNT 1
 		#define LEXER_SENTINEL_COUNT 2
 
-		static const std::wstring DAIJOUBU_CHAR_STR[] = {
-			L"ALPHA", L"DIGIT", L"END", L"SPACE", L"SYMBOL",
-			};
-
-		#define DAIJOUBU_CHAR_STRING(_TYPE_) \
-			((_TYPE_) > DAIJOUBU_CHAR_MAX ? UNKNOWN : \
-			CHECK_STRING(DAIJOUBU_CHAR_STR[_TYPE_]))
-
 		_daijoubu_lexer_base::_daijoubu_lexer_base(
 			__in_opt const std::wstring &input
 			) :
@@ -101,6 +93,13 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return m_ch_buffer;
+		}
+
+		daijoubu_unicode_t 
+		_daijoubu_lexer_base::character_class(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return character_to_class(character());
 		}
 
 		size_t 
@@ -181,39 +180,12 @@ namespace DAIJOUBU {
 			return m_ch_row;
 		}
 
-		daijoubu_char_t 
-		_daijoubu_lexer_base::character_to_type(
+		daijoubu_unicode_t 
+		_daijoubu_lexer_base::character_to_class(
 			__in wchar_t input
 			)
 		{
-			daijoubu_char_t result = DAIJOUBU_CHAR_SYMBOL;
-
-			if(input == CHARACTER_END) {
-				result = DAIJOUBU_CHAR_END;
-			} else if(std::iswalpha(input)) {
-				result = DAIJOUBU_CHAR_ALPHA;
-			} else if(std::iswdigit(input)) {
-				result = DAIJOUBU_CHAR_DIGIT;
-			} else if(std::iswspace(input)) {
-				result = DAIJOUBU_CHAR_SPACE;
-			}
-
-			return result;
-		}
-
-		daijoubu_char_t 
-		_daijoubu_lexer_base::character_type(void)
-		{
-			SERIALIZE_CALL_RECUR(m_lock);
-			return character_to_type(character());
-		}
-
-		std::wstring 
-		_daijoubu_lexer_base::character_as_string(
-			__in daijoubu_char_t type
-			)
-		{
-			return DAIJOUBU_CHAR_STRING(type);
+			return daijoubu::acquire()->unicode()->character_class(input);
 		}
 
 		void 
@@ -251,7 +223,7 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return ((m_ch_position < m_ch_buffer.size())
-					&& (character_type() != DAIJOUBU_CHAR_END));
+					&& (character() != CHARACTER_END));
 		}
 
 		bool 
@@ -382,7 +354,6 @@ namespace DAIJOUBU {
 		{
 			wchar_t ch;
 			std::wstring ln;
-			daijoubu_char_t ch_type;
 			std::wstringstream result;
 
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -391,22 +362,11 @@ namespace DAIJOUBU {
 				result << L"(" << m_ch_position << L"/" << (m_ch_buffer.size() - 1)
 					<< L") ";
 			}
-
-			ch_type = character_type();
+			
 			ch = character();
-			result << L"[" << DAIJOUBU_CHAR_STRING(ch_type) << L"] \'";
-
-			switch(ch_type) {
-				case DAIJOUBU_CHAR_END:
-				case DAIJOUBU_CHAR_SPACE:
-					result << L' ';
-					break;
-				default:
-					result << ch;
-					break;
-			}
-
-			result << L"\' (" << VALUE_AS_HEX(wchar_t, ch) << L")";
+			result << L"[" << DAIJOUBU_UNICODE_CLASS_STRING(character_class()).c_str() << L"] \'" 
+				<< (std::iswprint(ch) ? ch : L' ') << L"\' (" 
+				<< VALUE_AS_HEX(wchar_t, ch) << L")";
 
 			if(verbose) {
 				result << L":";
@@ -509,17 +469,19 @@ namespace DAIJOUBU {
 					L"Token position: %llu", m_tok_position);
 			}
 
-			skip_whitespace();
+			if(has_next_character()) {
+				skip_whitespace();
 
-			if(has_next_character()
-					&& (m_tok_position == daijoubu_lexer::size())) {
+				if(has_next_character()
+						&& (m_tok_position == daijoubu_lexer::size())) {
 
-				// TODO: enumerate tokens
-				m_tok_list.insert(m_tok_list.begin() + m_tok_position + 1, token_add(DAIJOUBU_TOKEN_IDENTIFIER));				
-				token_at(m_tok_position + 1).text() = std::wstring(1, character());
-				daijoubu_lexer_base::move_next_character();
-				// ---
+					// TODO: enumerate tokens
+					m_tok_list.insert(m_tok_list.begin() + m_tok_position + 1, token_add(DAIJOUBU_TOKEN_IDENTIFIER));				
+					token_at(m_tok_position + 1).text() = std::wstring(1, character());
+					daijoubu_lexer_base::move_next_character();
+					// ---
 
+				}
 			}
 
 			++m_tok_position;
@@ -617,14 +579,15 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			while(character_type() == DAIJOUBU_CHAR_SPACE) {
+			while(daijoubu_unicode::is_whitespace(character_class())) {
 				move_next_character();
 			}
 
 			skip_comment_block();
 			skip_comment_line();
 
-			if((character_type() == DAIJOUBU_CHAR_SPACE)
+			if((daijoubu_unicode::is_whitespace(character_class()) 
+					&& (character() != CHARACTER_END))
 					|| (character() == DAIJOUBU_COMMENT_BLOCK_OPEN)
 					|| (character() == DAIJOUBU_COMMENT_LINE)) {
 				skip_whitespace();
