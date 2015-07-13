@@ -1,0 +1,95 @@
+Daijoubu Lexer Grammar
+
+CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, literal_numeric, literal_string, 
+		operator, subscript, superscript, symbol, type
+
+---
+
+constant ::= 'e' | 'π' | 'null'
+
+control ::= 'break' | 'continue' | 'else' | 'final' | 'for' | 'if' | 'return' 
+		| 'show' | 'switch'
+
+identifier ::= [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<Cf>|<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Mc>|<Mn>|<Nd>|<Nl>|<Pc>|'_']*
+	| [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] <modifier>*
+
+modifier ::= <Lm> | <subscript> | '₋' | '₊' | '₌'
+
+literal_boolean ::= 'false' | 'true'
+
+literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
+
+literal_string ::= '“'<UTF8_char>*'”'
+
+operator ::= '∧'	('&&')
+	| '∨'		('||')
+	| '='
+	| '≠'		('~=')
+	| '<'
+	| '>'
+	| '≤'		('<=')
+	| '≥'		('>=')
+	| '+'
+	| '−'		('-')
+	| '/'
+	| '%'
+	| '⋅'		('*')
+	| '√'		('~^')
+	| 'log'
+	| '⊥'		('-%')
+	| '⊤'		('+%')
+	| '☘'		('??')
+	| '∈'		('?=')
+	| '⍷'		('.=')
+	| '↔'		('<_>')
+	| '⊙'		('@!')
+	| '⊕'		('@@')
+	| '⊖'		('@$')
+	| '⊗'		('@%')
+	| '⊘'		('@^')
+	| '⊜'		('@&')
+	| '⌾'		('@*')
+	| '¬'		('~')
+	| '‡'		('++')
+	| '¦'		('--')
+	| 'ln'
+	| 'sin'
+	| 'cos'
+	| 'tan'
+	| 'sec'
+	| 'csc'
+	| 'arcsin'
+	| 'arccos'
+	| 'arctan'
+	| 'arcsec'
+	| 'arccsc'
+	| 'arccot'
+	| '#'
+	| '^'
+	| '↦'		('_>')
+	| '?'
+	| '!'
+
+subscript ::= [₀-₉]+
+
+superscript ::= [⁰-⁹]+
+
+symbol ::= '⇐'		('<-')
+	| '⇔'		(<->)
+	| ';'
+	| '◊'		('<>')
+	| ','
+	| ':'
+	| '.'
+	| '('
+	| ')'
+	| '{'
+	| '}'
+	| '['
+	| ']'
+	| '|'
+	| '*'		('&')
+	| '''
+	| ':'
+
+type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'
