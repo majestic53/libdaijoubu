@@ -22,54 +22,54 @@ literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-
 literal_string ::= '“'<UTF8_char>*'”'
 
 operator ::= '+'		// addition
-    | 'arccsc'			// arc-cosecant
-    | 'arccos'			// arc-cosine
-    | 'arccot'			// arc-cotangent
-    | 'arcsec'			// arc-secant
-    | 'arcsin'			// arc-sine
-    | 'arctan'			// arc-tangent
-    | '#'			// cardinality
-    | '⊤'		('+%')	// ceiling (also greater of)
-    | 'csc'			// cosecant
-    | 'cos'			// cosine
-    | '↔'		('<_>')	// distance (also outer map)
-    | '/'			// division
-    | '='			// equals
-    | '^'			// exponent
-    | '!'			// factorial
-    | '⊥'		('-%')	// floor (also lesser of)
-    | '⊙'		('@!')	// generic 0
-    | '⊕'		('@@')	// generic 1
-    | '⊖'		('@$')	// generic 2
-    | '⊗'		('@%')	// generic 3
-    | '⊘'		('@^')	// generic 4
-    | '⊜'		('@&')	// generic 5
-    | '⌾'		('@*')	// generic 6
-    | '>'			// greater than
-    | '≥'		('>=')	// greater than, equals
-    | '⍷'		('.=')	// index of
-    | '<'			// less than
-    | '≤'		('<=')	// less than, equals
-    | 'log'			// logarithm
-    | '∧'		('&&')	// logical and
-    | '¬'		('~')	// logical negation
-    | '∨'		('||')	// logical or
-    | '⊻'		('><')	// logical xor
-    | '↦'		('_>')	// map
-    | '∈'		('?=')	// membership
-    | '%'			// modulo
-    | '⋅'		('*')	// multiplication
-    | 'ln'			// natural logarithm
-    | '≠'		('~=')	// not equals
-    | '☘'		('??')	// random
-    | 'sec'			// secant
-    | 'sin'			// sine
-    | '√'		('~^')	// square root
-    | '−'		('-')	// subtraction
-    | 'tan'			// tangent
-    | '?'			// ternary conditional
-    | '¦'		('--')	// unary decrement
-    | '‡'		('++')	// unary increment
+	| 'arccsc'		// arc-cosecant
+	| 'arccos'		// arc-cosine
+	| 'arccot'		// arc-cotangent
+	| 'arcsec'		// arc-secant
+	| 'arcsin'		// arc-sine
+	| 'arctan'		// arc-tangent
+	| '#'			// cardinality
+	| '⊤'		('+%')	// ceiling (also greater of)
+	| 'csc'			// cosecant
+	| 'cos'			// cosine
+	| '↔'		('<_>')	// distance (also outer map)
+	| '/'			// division
+	| '='			// equals
+	| '^'			// exponent
+	| '!'			// factorial
+	| '⊥'		('-%')	// floor (also lesser of)
+	| '⊙'		('@!')	// generic 0
+	| '⊕'		('@@')	// generic 1
+	| '⊖'		('@$')	// generic 2
+	| '⊗'		('@%')	// generic 3
+	| '⊘'		('@^')	// generic 4
+	| '⊜'		('@&')	// generic 5
+	| '⌾'		('@*')	// generic 6
+	| '>'			// greater than
+	| '≥'		('>=')	// greater than, equals
+	| '⍷'		('.=')	// index of
+	| '<'			// less than
+	| '≤'		('<=')	// less than, equals
+	| 'log'			// logarithm
+	| '∧'		('&&')	// logical and
+	| '¬'		('~')	// logical negation
+	| '∨'		('||')	// logical or
+	| '⊻'		('><')	// logical xor
+	| '↦'		('_>')	// map
+	| '∈'		('?=')	// membership
+	| '%'			// modulo
+	| '⋅'		('*')	// multiplication
+	| 'ln'			// natural logarithm
+	| '≠'		('~=')	// not equals
+	| '☘'		('??')	// random
+	| 'sec'			// secant
+	| 'sin'			// sine
+	| '√'		('~^')	// square root
+	| '−'		('-')	// subtraction
+	| 'tan'			// tangent
+	| '?'			// ternary conditional
+	| '¦'		('--')	// unary decrement
+	| '‡'		('++')	// unary increment
 
 subscript ::= [₀-₉]+
 
