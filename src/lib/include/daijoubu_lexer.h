@@ -29,10 +29,13 @@ namespace DAIJOUBU {
 
 		typedef enum {
 			DAIJOUBU_COMMENT_TYPE_NONE = 0,
+			DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE_TYPE,
 			DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE,
+			DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE_TYPE,
 			DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE,
 			DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE,
-		} daijoubu_comment_simple_t;
+			DAIJOUBU_COMMENT_LINE_TYPE,
+		} daijoubu_comment_t;
 
 		typedef class _daijoubu_lexer_base {
 
@@ -186,7 +189,7 @@ namespace DAIJOUBU {
 
 			protected:
 
-				daijoubu_comment_simple_t is_comment_simple(void);
+				daijoubu_comment_t is_comment_delimiter(void);
 
 				void skip_comment_block(void);
 

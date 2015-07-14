@@ -478,30 +478,42 @@ namespace DAIJOUBU {
 			return (m_tok_position > 0);
 		}
 
-		daijoubu_comment_simple_t 
-		_daijoubu_lexer::is_comment_simple(void)
+		daijoubu_comment_t 
+		_daijoubu_lexer::is_comment_delimiter(void)
 		{
 			wchar_t ch;
-			daijoubu_comment_simple_t result = DAIJOUBU_COMMENT_TYPE_NONE;
+			daijoubu_comment_t result = DAIJOUBU_COMMENT_TYPE_NONE;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			if(has_next_character()) {
 
 				ch = character();
-				if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+				if(ch == DAIJOUBU_COMMENT_BLOCK_CLOSE) {
+					result = DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE;
+				} else if(ch == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+					result = DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE;
+				} else if(ch == DAIJOUBU_COMMENT_LINE) {
+					result = DAIJOUBU_COMMENT_LINE_TYPE;
+				} else if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
 
-					ch = m_ch_buffer.at(m_ch_position + 1);
-					if(ch == DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE) {
-						result = DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE;
-					} else if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
-						result = DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE;
+					if(has_next_character()) {
+
+						ch = m_ch_buffer.at(m_ch_position + 1);
+						if(ch == DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE) {
+							result = DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE_TYPE;
+						} else if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+							result = DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE;
+						}
 					}
 				} else if(ch == DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE) {
 
-					ch = m_ch_buffer.at(m_ch_position + 1);
-					if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
-						result = DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE;
+					if(has_next_character()) {
+
+						ch = m_ch_buffer.at(m_ch_position + 1);
+						if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+							result = DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE_TYPE;
+						}
 					}
 				}
 			}
@@ -578,7 +590,7 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+			if(is_comment_delimiter() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
 
 				do {
 
@@ -590,10 +602,10 @@ namespace DAIJOUBU {
 
 					move_next_character();
 
-					while(character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+					while(is_comment_delimiter() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
 						skip_comment_block();
 					}
-				} while(character() != DAIJOUBU_COMMENT_BLOCK_CLOSE);
+				} while(is_comment_delimiter() != DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE);
 
 				move_next_character();
 			}
@@ -604,7 +616,7 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
+			if(is_comment_delimiter() == DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE_TYPE) {
 				move_next_character();
 
 				do {
@@ -617,10 +629,10 @@ namespace DAIJOUBU {
 
 					move_next_character();
 
-					while(is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
+					while(is_comment_delimiter() == DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE_TYPE) {
 						skip_comment_block_simple();
 					}
-				} while(is_comment_simple() != DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE);
+				} while(is_comment_delimiter() != DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE_TYPE);
 
 				move_next_character();
 				move_next_character();
@@ -632,7 +644,7 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(character() == DAIJOUBU_COMMENT_LINE) {
+			if(is_comment_delimiter() == DAIJOUBU_COMMENT_LINE_TYPE) {
 
 				do {
 
@@ -654,7 +666,7 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(is_comment_simple() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE) {
+			if(is_comment_delimiter() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE) {
 				move_next_character();
 
 				do {
@@ -688,10 +700,7 @@ namespace DAIJOUBU {
 
 			if((daijoubu_unicode::is_whitespace(character_class()) 
 					&& (character() != CHARACTER_END))
-					|| (character() == DAIJOUBU_COMMENT_BLOCK_OPEN)
-					|| (character() == DAIJOUBU_COMMENT_LINE)
-					|| (is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE)
-					|| (is_comment_simple() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE)) {
+					|| (is_comment_delimiter() != DAIJOUBU_COMMENT_TYPE_NONE)) {
 				skip_whitespace();
 			}
 		}

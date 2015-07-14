@@ -12,5 +12,5 @@
 
 ; LINE COMMENT SIMPLE
 
-##\n##abc\n##abc\n##fg\n\n##abc[*\n##fg[*h*]
+##\n##abc\n##abc\n##fg\n\n##abc[*\n##fg[#h#]
 
