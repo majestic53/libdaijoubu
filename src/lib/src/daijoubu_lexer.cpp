@@ -656,16 +656,15 @@ namespace DAIJOUBU {
 
 			if(is_comment_simple() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE) {
 				move_next_character();
-				move_next_character();
 
-				while(character() != CHARACTER_NEWLINE) {
+				do {
 
 					if(!has_next_character()) {
 						break;
 					}
 
 					move_next_character();
-				};
+				} while(character() != CHARACTER_NEWLINE);
 
 				if(has_next_character()) {
 					move_next_character();
