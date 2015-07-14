@@ -29,7 +29,7 @@ main(void)
 	daijoubu_region_t region;
 	daijoubu_ptr inst = NULL;
 
-	std::setlocale(LC_CTYPE,"");
+	std::setlocale(LC_CTYPE, std::string().c_str());
 
 	try {
 
@@ -42,7 +42,7 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer lex(L"【abc】bc【de\n】※f\n\n【】\n※※※");
+		daijoubu_lexer lex(L"");
 
 		std::wcout << L"Size: " << lex.size() << std::endl;
 

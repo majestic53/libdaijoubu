@@ -33,6 +33,14 @@ namespace DAIJOUBU {
 			'w', 'x', 'y', 'z',
 			};
 
+		static const wchar_t RADIX_WCHAR[] = {
+			L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7',
+			L'8', L'9', L'a', L'b', L'c', L'd', L'e', L'f',
+			L'g', L'h', L'i', L'j', L'k', L'l', L'm', L'n', 
+			L'o', L'p', L'q', L'r', L's', L't', L'u', L'v',
+			L'w', L'x', L'y', L'z',
+			};
+
 		static const uint32_t RADIX_SCALE[] = {
 			36, 2, 10, 16, 8,
 			};
@@ -71,6 +79,56 @@ namespace DAIJOUBU {
 								THROW_DAIJOUBU_LANGUAGE_EXCEPTION_MESSAGE(
 									DAIJOUBU_LANGUAGE_EXCEPTION_INVALID_CHARACTER,
 									L"\'%c\' (radix: %lu)", ch, RADIX_SCALE[radix]);
+							}
+
+							result += radix_iter * std::pow(RADIX_SCALE[radix], 
+								(input.size() - iter - 1));
+						}
+						break;
+					default:
+						THROW_DAIJOUBU_LANGUAGE_EXCEPTION_MESSAGE(
+							DAIJOUBU_LANGUAGE_EXCEPTION_INVALID_RADIX,
+							L"%lu", radix);
+				}
+			}
+
+			return result;
+		}
+
+		uint32_t 
+		unicode_string_as_value(
+			__in const std::wstring &input,
+			__in daijoubu_radix_t radix
+			)
+		{
+			wchar_t ch;
+			uint32_t result = 0;
+			size_t iter = 0, radix_iter;
+
+			if(!input.empty()) {
+
+				switch(radix) {
+					case DAIJOUBU_RADIX_36:
+					case DAIJOUBU_RADIX_BINARY:
+					case DAIJOUBU_RADIX_DECIMAL:
+					case DAIJOUBU_RADIX_HEXIDECIMAL:
+					case DAIJOUBU_RADIX_OCTAL:
+
+						for(; iter < input.size(); ++iter) {
+							ch = std::towlower(input.at(iter));
+
+							for(radix_iter = 0; radix_iter < RADIX_SCALE[radix]; 
+									++radix_iter) {
+
+								if(ch == RADIX_WCHAR[radix_iter]) {
+									break;
+								}
+							}
+
+							if(radix_iter >= RADIX_SCALE[radix]) {
+								THROW_DAIJOUBU_LANGUAGE_EXCEPTION_MESSAGE(
+									DAIJOUBU_LANGUAGE_EXCEPTION_INVALID_CHARACTER,
+									L"\'%lc\' (radix: %lu)", ch, RADIX_SCALE[radix]);
 							}
 
 							result += radix_iter * std::pow(RADIX_SCALE[radix], 

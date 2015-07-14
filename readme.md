@@ -12,8 +12,14 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1529
+*Updated: 7/13/2015*
+
+* Added token subtypes (incomplete)
+* Added support for simple dialect
+
 ###Version 0.1.1528
-*Updated 7/12/2015*
+*Updated: 7/12/2015*
 
 * Added unicode support
 

@@ -1,0 +1,16 @@
+; BLOCK COMMENT
+
+【】\n【【】】\n【【】【】】\n【【】【】【】】\n【abc\n【\n\n\nabc】\n\n##\n】\n【abc\n【\n\n\nabc】\n\n※\n】
+
+; BLOCK COMMENT SIMPLE
+
+[##]\n[#[##]#]\n[#[##][##]#]\n[#[##][##][##]#]\n[#abc\n[#\n\n\nabc#]\n\n##\n#]
+
+; LINE COMMENT
+
+※\n※※\n※abc\n※abc\n※fg\n\n※abc[*\n※fg[*h*]\n※abc【\n※fg【h】
+
+; LINE COMMENT SIMPLE
+
+##\n##abc\n##abc\n##fg\n\n##abc[*\n##fg[*h*]
+

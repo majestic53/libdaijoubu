@@ -27,12 +27,20 @@ namespace DAIJOUBU {
 
 	namespace LANGUAGE {
 
+		typedef enum {
+			DAIJOUBU_COMMENT_TYPE_NONE = 0,
+			DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE,
+			DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE,
+			DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE,
+		} daijoubu_comment_simple_t;
+
 		typedef class _daijoubu_lexer_base {
 
 			public:
 
 				_daijoubu_lexer_base(
-					__in_opt const std::wstring &input = std::wstring()
+					__in_opt const std::wstring &input = std::wstring(),
+					__in_opt bool simple = false
 					);
 
 				_daijoubu_lexer_base(
@@ -74,6 +82,8 @@ namespace DAIJOUBU {
 
 				bool has_previous_character(void);
 
+				bool is_simple(void);
+
 				wchar_t move_next_character(void);
 
 				wchar_t move_previous_character(void);
@@ -81,7 +91,8 @@ namespace DAIJOUBU {
 				virtual void reset(void);
 
 				virtual void set(
-					__in const std::wstring &input
+					__in const std::wstring &input,
+					__in_opt bool simple = false
 					);
 
 				virtual size_t size(void);
@@ -106,6 +117,8 @@ namespace DAIJOUBU {
 
 				size_t m_ch_row;
 
+				bool m_simple;
+
 			private:
 
 				std::recursive_mutex m_lock;
@@ -118,7 +131,8 @@ namespace DAIJOUBU {
 			public:
 
 				_daijoubu_lexer(
-					__in_opt const std::wstring &input = std::wstring()
+					__in_opt const std::wstring &input = std::wstring(),
+					__in_opt bool simple = false
 					);
 
 				_daijoubu_lexer(
@@ -146,7 +160,8 @@ namespace DAIJOUBU {
 				virtual void reset(void);
 
 				virtual void set(
-					__in const std::wstring &input
+					__in const std::wstring &input,
+					__in_opt bool simple = false
 					);
 
 				virtual size_t size(void);
@@ -171,9 +186,15 @@ namespace DAIJOUBU {
 
 			protected:
 
+				daijoubu_comment_simple_t is_comment_simple(void);
+
 				void skip_comment_block(void);
 
+				void skip_comment_block_simple(void);
+
 				void skip_comment_line(void);
+
+				void skip_comment_line_simple(void);
 
 				void skip_whitespace(void);
 

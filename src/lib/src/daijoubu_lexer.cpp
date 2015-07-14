@@ -31,13 +31,15 @@ namespace DAIJOUBU {
 		#define LEXER_SENTINEL_COUNT 2
 
 		_daijoubu_lexer_base::_daijoubu_lexer_base(
-			__in_opt const std::wstring &input
+			__in_opt const std::wstring &input,
+			__in_opt bool simple
 			) :
 				m_ch_column(0),
 				m_ch_position(0),
-				m_ch_row(0)
+				m_ch_row(0),
+				m_simple(false)
 		{
-			daijoubu_lexer_base::set(input);
+			daijoubu_lexer_base::set(input, simple);
 		}
 
 		_daijoubu_lexer_base::_daijoubu_lexer_base(
@@ -47,7 +49,8 @@ namespace DAIJOUBU {
 				m_ch_column(other.m_ch_column),
 				m_ch_line_map(other.m_ch_line_map),
 				m_ch_position(other.m_ch_position),
-				m_ch_row(other.m_ch_row)
+				m_ch_row(other.m_ch_row),
+				m_simple(other.m_simple)
 		{
 			return;
 		}
@@ -70,6 +73,7 @@ namespace DAIJOUBU {
 				m_ch_line_map = other.m_ch_line_map;
 				m_ch_position = other.m_ch_position;
 				m_ch_row = other.m_ch_row;
+				m_simple = other.m_simple;
 			}
 
 			return *this;
@@ -233,6 +237,13 @@ namespace DAIJOUBU {
 			return (m_ch_position > 0);
 		}
 
+		bool 
+		_daijoubu_lexer_base::is_simple(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_simple;
+		}
+
 		wchar_t 
 		_daijoubu_lexer_base::move_next_character(void)
 		{
@@ -248,6 +259,11 @@ namespace DAIJOUBU {
 			}
 
 			result = character();
+			if(m_simple && (result > UINT8_MAX)) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(DAIJOUBU_LEXER_EXCEPTION_INVALID_DIALECT,
+					L"\'%lc\' (0x%x)", (std::iswprint(result) ? result : L' '), result);
+			}
+
 			if(result == CHARACTER_NEWLINE) {
 				++m_ch_row;
 
@@ -311,7 +327,8 @@ namespace DAIJOUBU {
 
 		void 
 		_daijoubu_lexer_base::set(
-			__in const std::wstring &input
+			__in const std::wstring &input,
+			__in_opt bool simple
 			)
 		{
 			wchar_t ch;
@@ -320,6 +337,7 @@ namespace DAIJOUBU {
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
+			m_simple = simple;
 			daijoubu_lexer_base::clear();
 			m_ch_buffer = input + CHARACTER_END;
 
@@ -385,11 +403,12 @@ namespace DAIJOUBU {
 		}
 
 		_daijoubu_lexer::_daijoubu_lexer(
-			__in_opt const std::wstring &input
+			__in_opt const std::wstring &input,
+			__in_opt bool simple
 			) :
 				m_tok_position(0)
 		{
-			daijoubu_lexer::set(input);
+			daijoubu_lexer::set(input, simple);
 		}
 
 		_daijoubu_lexer::_daijoubu_lexer(
@@ -459,6 +478,37 @@ namespace DAIJOUBU {
 			return (m_tok_position > 0);
 		}
 
+		daijoubu_comment_simple_t 
+		_daijoubu_lexer::is_comment_simple(void)
+		{
+			wchar_t ch;
+			daijoubu_comment_simple_t result = DAIJOUBU_COMMENT_TYPE_NONE;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(has_next_character()) {
+
+				ch = character();
+				if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+
+					ch = m_ch_buffer.at(m_ch_position + 1);
+					if(ch == DAIJOUBU_COMMENT_BLOCK_CLOSE_SIMPLE) {
+						result = DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE;
+					} else if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+						result = DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE;
+					}
+				} else if(ch == DAIJOUBU_COMMENT_BLOCK_OPEN_SIMPLE) {
+
+					ch = m_ch_buffer.at(m_ch_position + 1);
+					if(ch == DAIJOUBU_COMMENT_LINE_SIMPLE) {
+						result = DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE;
+					}
+				}
+			}
+
+			return result;
+		}
+
 		daijoubu_token &
 		_daijoubu_lexer::move_next_token(void)
 		{
@@ -511,13 +561,14 @@ namespace DAIJOUBU {
 
 		void 
 		_daijoubu_lexer::set(
-			__in const std::wstring &input
+			__in const std::wstring &input,
+			__in_opt bool simple
 			)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			daijoubu_lexer::clear();
-			daijoubu_lexer_base::set(input);
+			daijoubu_lexer_base::set(input, simple);
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_BEGIN));
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_END));
 		}
@@ -537,17 +588,41 @@ namespace DAIJOUBU {
 							L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
 					}
 
-					if(move_next_character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
+					move_next_character();
+
+					while(character() == DAIJOUBU_COMMENT_BLOCK_OPEN) {
 						skip_comment_block();
 					}
 				} while(character() != DAIJOUBU_COMMENT_BLOCK_CLOSE);
 
-				if(!has_next_character()) {
-					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
-						DAIJOUBU_LEXER_EXCEPTION_UNTERMINATED_COMMENT,
-						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
-				}
+				move_next_character();
+			}
+		}
 
+		void 
+		_daijoubu_lexer::skip_comment_block_simple(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
+				move_next_character();
+
+				do {
+
+					if(!has_next_character()) {
+						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+							DAIJOUBU_LEXER_EXCEPTION_UNTERMINATED_COMMENT,
+							L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+					}
+
+					move_next_character();
+
+					while(is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE) {
+						skip_comment_block_simple();
+					}
+				} while(is_comment_simple() != DAIJOUBU_COMMENT_BLOCK_CLOSE_TYPE);
+
+				move_next_character();
 				move_next_character();
 			}
 		}
@@ -575,6 +650,30 @@ namespace DAIJOUBU {
 		}
 
 		void 
+		_daijoubu_lexer::skip_comment_line_simple(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(is_comment_simple() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE) {
+				move_next_character();
+				move_next_character();
+
+				while(character() != CHARACTER_NEWLINE) {
+
+					if(!has_next_character()) {
+						break;
+					}
+
+					move_next_character();
+				};
+
+				if(has_next_character()) {
+					move_next_character();
+				}
+			}
+		}
+
+		void 
 		_daijoubu_lexer::skip_whitespace(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -583,13 +682,17 @@ namespace DAIJOUBU {
 				move_next_character();
 			}
 
+			skip_comment_block_simple();
 			skip_comment_block();
-			skip_comment_line();
+			skip_comment_line_simple();
+			skip_comment_line();			
 
 			if((daijoubu_unicode::is_whitespace(character_class()) 
 					&& (character() != CHARACTER_END))
 					|| (character() == DAIJOUBU_COMMENT_BLOCK_OPEN)
-					|| (character() == DAIJOUBU_COMMENT_LINE)) {
+					|| (character() == DAIJOUBU_COMMENT_LINE)
+					|| (is_comment_simple() == DAIJOUBU_COMMENT_BLOCK_OPEN_TYPE)
+					|| (is_comment_simple() == DAIJOUBU_COMMENT_LINE_SIMPLE_TYPE)) {
 				skip_whitespace();
 			}
 		}
