@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1529
+*Updated: 7/14/2015*
+
+* Added token subtypes (complete)
+* Added string literal support
+
 *Updated: 7/13/2015*
 
 * Added token subtypes (incomplete)

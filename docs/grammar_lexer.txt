@@ -7,7 +7,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 constant ::= 'e' | 'π' | 'null'
 
-control ::= 'break' | 'continue' | 'else' | 'final' | 'for' | 'if' | 'return' 
+control ::= 'break' | 'continue' | 'elif' | 'else' | 'final' | 'for' | 'if' | 'return' 
 		| 'show' | 'switch'
 
 identifier ::= [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<Cf>|<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Mc>|<Mn>|<Nd>|<Nl>|<Pc>|'_']*
@@ -30,6 +30,7 @@ operator ::= '+'		// addition
 	| 'arctan'		// arc-tangent
 	| '#'			// cardinality
 	| '⊤'		('+%')	// ceiling (also greater of)
+	| '✓'		('?:')	// coalescence
 	| 'csc'			// cosecant
 	| 'cos'			// cosine
 	| '↔'		('<_>')	// distance (also outer map)
@@ -79,7 +80,7 @@ symbol ::= ']'			// access bracket close
 	| '['			// access bracket open
 	| ','			// argument delimiter
 	| '⇐'		('<-')	// assignment
-	| '⇔'		(<->)	// assignment swap
+	| '⇔'		('<->')	// assignment swap
 	| '}'			// block bracket close
 	| '{'			// block bracket open
 	| '|'			// context separator
@@ -88,7 +89,6 @@ symbol ::= ']'			// access bracket close
 	| '('			// function bracket open (also precedence bracket open)
 	| '.'			// member access
 	| '*'		('&')	// pointer
-	| '◊'		('<>')	// statement delimiter
 	| ';'			// statement terminator
 	| ':'			// ternary delimiter
 

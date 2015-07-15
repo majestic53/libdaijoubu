@@ -1,0 +1,7 @@
+; LITERAL STRING
+
+<<This is a test_0123>>
+
+; LITERAL STRING SIMPLE
+
+“This is a test_9876”

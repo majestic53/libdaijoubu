@@ -44,6 +44,8 @@ main(void)
 
 		daijoubu_lexer lex(L"");
 
+		std::wcout << unicode_string_as_value(L"−3.14", DAIJOUBU_RADIX_DECIMAL) << std::endl;
+
 		std::wcout << L"Size: " << lex.size() << std::endl;
 
 		while(lex.has_next_token()) {

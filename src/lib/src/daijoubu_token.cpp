@@ -24,16 +24,6 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
-		static const std::wstring DAIJOUBU_TOKEN_STR[] = {
-			L"BEGIN", L"CONSTANT", L"CONTROL", L"END", L"IDENTIFIER", L"MODIFIER", 
-			L"LITERAL_BOOLEAN", L"LITERAL_NUMERIC", L"LITERAL_STRING", L"OPERATOR", 
-			L"SUBSCRIPT", L"SUPERSCRIPT", L"SYMBOL", L"TYPE",
-			};
-
-		#define DAIJOUBU_TOKEN_STRING(_TYPE_) \
-			((_TYPE_) > (unsigned) DAIJOUBU_TOKEN_MAX ? INVALID : \
-			CHECK_STRING(DAIJOUBU_TOKEN_STR[_TYPE_]))
-
 		_daijoubu_token::_daijoubu_token(
 			__in_opt daijoubu_token_t type,
 			__in_opt uint16_t subtype
@@ -194,23 +184,40 @@ namespace DAIJOUBU {
 			)
 		{
 			std::wstringstream result;
+			std::wstring::const_iterator iter;
 
 			if(verbose) {
 				result << L"(" << VALUE_AS_HEX(daijoubu_uid, token.m_uid) << L" ";
 			}
 
-			result << L"[" << DAIJOUBU_TOKEN_STRING(token.m_type) << L", ";
+			result << L"[" << DAIJOUBU_TOKEN_STRING(token.m_type);
 
-			if(token.m_subtype == INVALID_TOKEN_SUBTYPE) {
-				result << INVALID;
-			} else {
-				result << VALUE_AS_HEX(uint16_t, token.m_subtype);
+			switch(token.m_type) {
+				case DAIJOUBU_TOKEN_BEGIN:
+				case DAIJOUBU_TOKEN_END:
+					break;
+				default:
+					result << L", ";
+
+					if(token.m_subtype == INVALID_TOKEN_SUBTYPE) {
+						result << INVALID;
+					} else {
+						result << VALUE_AS_HEX(uint16_t, token.m_subtype);
+					}
+					break;
 			}
 
 			result << L"]";
 
 			if(!token.m_text.empty()) {
-				result << L" \'" << token.m_text << L"\'";
+				result << L" \'";
+
+				for(iter = token.m_text.begin(); iter != token.m_text.end(); 
+						++iter) {
+					result << (std::iswprint(*iter) ? *iter : L' ');
+				}
+
+				result << L"\'";
 			}
 
 			switch(token.m_type) {
@@ -219,16 +226,25 @@ namespace DAIJOUBU {
 					break;
 				default:
 					result << L" " << token.m_value;
+
+					if(verbose) {
+						result << L":";
+
+						if(!token.m_line.empty()) {
+							result << L" \"";
+
+							for(iter = token.m_line.begin(); iter != token.m_line.end(); 
+									++iter) {
+								result << (std::iswprint(*iter) ? *iter : L' ');
+							}
+
+							result << L"\"[" << token.m_offset << L"]";
+						}
+					}
 					break;
 			}
 
 			if(verbose) {
-				result << L":";
-
-				if(!token.m_line.empty()) {
-					result << L" \"" << token.m_line << L"\"[" << token.m_offset << L"]";
-				}
-
 				result << L" (" << token.m_position << L", {"
 					<< token.m_row << L", " << token.m_column << L"})";
 			}

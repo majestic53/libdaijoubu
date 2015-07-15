@@ -37,6 +37,20 @@ namespace DAIJOUBU {
 			DAIJOUBU_COMMENT_LINE_TYPE,
 		} daijoubu_comment_t;
 
+		typedef enum {
+			DAIJOUBU_NEWLINE_TYPE_NONE = 0,
+			DAIJOUBU_NEWLINE_TYPE_WINDOWS,
+			DAIJOUBU_NEWLINE_TYPE_UNIX,
+		} daijoubu_newline_t;
+
+		typedef enum {
+			DAIJOUBU_STRING_TYPE_NONE = 0,
+			DAIJOUBU_STRING_CLOSE_SIMPLE_TYPE,
+			DAIJOUBU_STRING_CLOSE_TYPE,
+			DAIJOUBU_STRING_OPEN_SIMPLE_TYPE,
+			DAIJOUBU_STRING_OPEN_TYPE,
+		} daijoubu_string_t;
+
 		typedef class _daijoubu_lexer_base {
 
 			public:
@@ -109,6 +123,8 @@ namespace DAIJOUBU {
 				std::map<size_t, std::pair<size_t, std::wstring>>::iterator find(
 					__in size_t row
 					);
+
+				daijoubu_newline_t is_newline_delimiter(void);
 
 				std::wstring m_ch_buffer;
 
@@ -189,7 +205,11 @@ namespace DAIJOUBU {
 
 			protected:
 
+				void enumerate_literal_string(void);
+
 				daijoubu_comment_t is_comment_delimiter(void);
+
+				daijoubu_string_t is_string_delimiter(void);
 
 				void skip_comment_block(void);
 
@@ -202,8 +222,13 @@ namespace DAIJOUBU {
 				void skip_whitespace(void);
 
 				daijoubu_uid token_add(
-					__in_opt daijoubu_token_t type = INVALID_TOKEN_TYPE,
-					__in_opt uint16_t subtype = INVALID_TOKEN_SUBTYPE,
+					__in daijoubu_token_t type,
+					__in_opt uint16_t subtype = INVALID_TOKEN_SUBTYPE
+					);
+
+				daijoubu_uid token_add(
+					__in daijoubu_token_t type,
+					__in uint16_t subtype,
 					__in_opt const std::wstring &text = std::wstring(),
 					__in_opt long double value = 0.0,
 					__in_opt const std::wstring &line = std::wstring(),
@@ -215,6 +240,10 @@ namespace DAIJOUBU {
 
 				daijoubu_token &token_at(
 					__in size_t position
+					);
+
+				void token_insert(
+					__in daijoubu_uid uid
 					);
 
 				void token_remove(

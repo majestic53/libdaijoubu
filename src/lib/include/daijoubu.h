@@ -28,6 +28,7 @@
 
 #include "daijoubu_defines.h"
 #include "daijoubu_exception.h"
+#include "daijoubu_language.h"
 
 using namespace DAIJOUBU;
 
@@ -45,7 +46,6 @@ using namespace DAIJOUBU::COMPONENT;
 #define LANGUAGE lang
 #endif // LANGUAGE
 
-#include "daijoubu_language.h"
 #include "daijoubu_lexer.h"
 
 using namespace DAIJOUBU::LANGUAGE;
