@@ -213,13 +213,13 @@ namespace DAIJOUBU {
 
 	static const std::wstring DAIJOUBU_OPERATOR_STR[] = {
 		L"+", L"arccsc", L"arccos", L"arccot", L"arcsec", L"arcsin", L"arctan", L"#", 
-		L"⊤", L"+%", L"✓", L"?:", L"csc", L"cos", L"↔", L"<_>", L"/", 
-		L"=", L"^", L"!", L"⊥", L"-%", L"⊙", L"@!", L"⊕", 
-		L"@@", L"⊖", L"@$", L"⊗", L"@%", L"⊘", L"@^", L"⊜", 
+		L"⊤", L"+\%", L"✓", L"?:", L"csc", L"cos", L"↔", L"<_>", L"/", 
+		L"=", L"^", L"!", L"⊥", L"-\%", L"⊙", L"@!", L"⊕", 
+		L"@@", L"⊖", L"@$", L"⊗", L"@\%", L"⊘", L"@^", L"⊜", 
 		L"@&", L"⌾", L"@*", L">", L"≥", L">=", L"⍷", L".=", 
 		L"<", L"≤", L"<=", L"log", L"∧", L"&&", L"¬", L"~", 
 		L"∨", L"||", L"⊻", L"><", L"↦", L"_>", L"∈", L"?=", 
-		L"%", L"⋅", L"*", L"ln", L"≠", L"~=", L"☘", L"??", 
+		L"\%", L"⋅", L"*", L"ln", L"≠", L"~=", L"☘", L"??", 
 		L"sec", L"sin", L"√", L"~^", L"−", L"-", L"tan", L"?", 
 		L"¦", L"--", L"‡", L"++", 
 		};
