@@ -233,9 +233,9 @@ namespace DAIJOUBU {
 
 				void enumerate_operator(void);
 
-				void enumerate_subscript(void);
-
 				void enumerate_string(void);
+
+				void enumerate_subscript(void);
 
 				void enumerate_superscript(void);
 
