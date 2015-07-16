@@ -497,7 +497,259 @@ namespace DAIJOUBU {
 		}
 
 		void 
-		_daijoubu_lexer::enumerate_literal_string(void)
+		_daijoubu_lexer::enumerate_class_control(
+			__in daijoubu_unicode_t type
+			)
+		{
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_CC:
+				case DAIJOUBU_UNICODE_CLASS_CF:
+				case DAIJOUBU_UNICODE_CLASS_CN:
+				case DAIJOUBU_UNICODE_CLASS_CO:
+				case DAIJOUBU_UNICODE_CLASS_CS:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_CONTROL,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_class_letter(
+			__in daijoubu_unicode_t type
+			)
+		{
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_LC:
+				case DAIJOUBU_UNICODE_CLASS_LL:
+				case DAIJOUBU_UNICODE_CLASS_LM:
+				case DAIJOUBU_UNICODE_CLASS_LO:
+				case DAIJOUBU_UNICODE_CLASS_LT:
+				case DAIJOUBU_UNICODE_CLASS_LU:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_LETTER,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_class_mark(
+			__in daijoubu_unicode_t type
+			)
+		{
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_MC:
+				case DAIJOUBU_UNICODE_CLASS_ME:
+				case DAIJOUBU_UNICODE_CLASS_MN:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_MARK,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_class_number(
+			__in daijoubu_unicode_t type
+			)
+		{
+			wchar_t ch;
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			ch = character();
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_ND:
+				case DAIJOUBU_UNICODE_CLASS_NL:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				case DAIJOUBU_UNICODE_CLASS_NO:
+
+					if(is_subscript()) {
+						enumerate_subscript();
+					} else if(is_superscript()) {
+						enumerate_superscript();
+					} else {
+						supported = false;
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_NUMBER,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_class_punctuation(
+			__in daijoubu_unicode_t type
+			)
+		{
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_PC:
+				case DAIJOUBU_UNICODE_CLASS_PD:
+				case DAIJOUBU_UNICODE_CLASS_PE:
+				case DAIJOUBU_UNICODE_CLASS_PF:
+				case DAIJOUBU_UNICODE_CLASS_PO:
+				case DAIJOUBU_UNICODE_CLASS_PS:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				case DAIJOUBU_UNICODE_CLASS_PI:
+
+					if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_TYPE) {
+						enumerate_string();
+					} else {
+
+						// TODO
+						supported = false;
+						// ---
+
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_PUNCTUATION,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_class_symbol(
+			__in daijoubu_unicode_t type
+			)
+		{
+			bool supported = true;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case DAIJOUBU_UNICODE_CLASS_SC:
+				case DAIJOUBU_UNICODE_CLASS_SK:
+				case DAIJOUBU_UNICODE_CLASS_SO:
+
+					// TODO
+					supported = false;
+					// ---
+
+					break;
+				case DAIJOUBU_UNICODE_CLASS_SM:
+
+					if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_SIMPLE_TYPE) {
+						enumerate_string();
+					} else {
+
+						// TODO
+						supported = false;
+						// ---
+
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_CLASS_SYMBOL,
+						L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(!supported) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_keyword(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_operator(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_string(void)
 		{
 			std::wstring text;
 			bool terminated = false;
@@ -568,6 +820,62 @@ namespace DAIJOUBU {
 
 			token_insert(token_add(DAIJOUBU_TOKEN_LITERAL_STRING));
 			token_at(m_tok_position + 1).text() = text;
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_subscript(void)
+		{
+			std::wstring text;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			do {
+				text += character();
+
+				if(!has_next_character()) {
+					break;
+				}
+
+				move_next_character();
+			} while(is_subscript());
+
+			token_insert(token_add(DAIJOUBU_TOKEN_SUBSCRIPT));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.text() = text;
+			tok.value() = unicode_string_as_value(convert_subscript_to_string(text), 
+				DAIJOUBU_RADIX_DECIMAL);
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_superscript(void)
+		{
+			std::wstring text;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			do {
+				text += character();
+
+				if(!has_next_character()) {
+					break;
+				}
+
+				move_next_character();
+			} while(is_superscript());
+
+			token_insert(token_add(DAIJOUBU_TOKEN_SUPERSCRIPT));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.text() = text;
+			tok.value() = unicode_string_as_value(convert_superscript_to_string(text), 
+				DAIJOUBU_RADIX_DECIMAL);
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_symbol(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
 		}
 
 		bool 
@@ -671,9 +979,39 @@ namespace DAIJOUBU {
 			return result;
 		}
 
+		bool 
+		_daijoubu_lexer::is_subscript(void)
+		{
+			wchar_t ch;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			ch = character();
+
+			return ((ch >= DAIJOUBU_SUBSCRIPT_LOW) 
+				&& (ch <= DAIJOUBU_SUBSCRIPT_HIGH));
+		}
+
+		bool 
+		_daijoubu_lexer::is_superscript(void)
+		{
+			wchar_t ch;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			ch = character();
+
+			return (((ch >= DAIJOUBU_SUPERSCRIPT_FIRST_LOW) 
+				&& (ch <= DAIJOUBU_SUPERSCRIPT_FIRST_HIGH))
+				|| ((ch >= DAIJOUBU_SUPERSCRIPT_SECOND_LOW) 
+				&& (ch <= DAIJOUBU_SUPERSCRIPT_SECOND_HIGH)));
+		}
+
 		daijoubu_token &
 		_daijoubu_lexer::move_next_token(void)
 		{
+			daijoubu_unicode_t type;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			if(!has_next_token()) {
@@ -686,12 +1024,53 @@ namespace DAIJOUBU {
 			if(has_next_character()
 					&& (m_tok_position == daijoubu_lexer::size())) {
 
-				// TODO: enumerate tokens
-				//token_insert(token_add(DAIJOUBU_TOKEN_IDENTIFIER));
-				//token_at(m_tok_position + 1).text() = std::wstring(1, character());
-				//daijoubu_lexer_base::move_next_character();
-				enumerate_literal_string();
-				// ---
+				type = character_class();
+				switch(type) {
+					case DAIJOUBU_UNICODE_CLASS_CC:
+					case DAIJOUBU_UNICODE_CLASS_CF:
+					case DAIJOUBU_UNICODE_CLASS_CN:
+					case DAIJOUBU_UNICODE_CLASS_CO:
+					case DAIJOUBU_UNICODE_CLASS_CS:
+						enumerate_class_control(type);
+						break;
+					case DAIJOUBU_UNICODE_CLASS_LC:
+					case DAIJOUBU_UNICODE_CLASS_LL:
+					case DAIJOUBU_UNICODE_CLASS_LM:
+					case DAIJOUBU_UNICODE_CLASS_LO:
+					case DAIJOUBU_UNICODE_CLASS_LT:
+					case DAIJOUBU_UNICODE_CLASS_LU:
+						enumerate_class_letter(type);
+						break;
+					case DAIJOUBU_UNICODE_CLASS_MC:
+					case DAIJOUBU_UNICODE_CLASS_ME:
+					case DAIJOUBU_UNICODE_CLASS_MN:
+						enumerate_class_mark(type);
+						break;
+					case DAIJOUBU_UNICODE_CLASS_ND:
+					case DAIJOUBU_UNICODE_CLASS_NL:
+					case DAIJOUBU_UNICODE_CLASS_NO:
+						enumerate_class_number(type);
+						break;
+					case DAIJOUBU_UNICODE_CLASS_PC:
+					case DAIJOUBU_UNICODE_CLASS_PD:
+					case DAIJOUBU_UNICODE_CLASS_PE:
+					case DAIJOUBU_UNICODE_CLASS_PF:
+					case DAIJOUBU_UNICODE_CLASS_PI:
+					case DAIJOUBU_UNICODE_CLASS_PO:
+					case DAIJOUBU_UNICODE_CLASS_PS:
+						enumerate_class_punctuation(type);
+						break;
+					case DAIJOUBU_UNICODE_CLASS_SC:
+					case DAIJOUBU_UNICODE_CLASS_SK:
+					case DAIJOUBU_UNICODE_CLASS_SM:
+					case DAIJOUBU_UNICODE_CLASS_SO:
+						enumerate_class_symbol(type);
+						break;
+					default:
+						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+							DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_CHARACTER_CLASS,
+							L"0x%x\n\t%ls", type, CHECK_STRING(character_exception(1, true)));
+				}
 			}
 
 			++m_tok_position;

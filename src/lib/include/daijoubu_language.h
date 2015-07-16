@@ -41,6 +41,12 @@ namespace DAIJOUBU {
 	#define DAIJOUBU_LITERAL_STRING_CLOSE_SIMPLE DAIJOUBU_CHARACTER(L'>')
 	#define DAIJOUBU_LITERAL_STRING_OPEN DAIJOUBU_CHARACTER(L'“')
 	#define DAIJOUBU_LITERAL_STRING_OPEN_SIMPLE DAIJOUBU_CHARACTER(L'<')
+	#define DAIJOUBU_SUBSCRIPT_LOW DAIJOUBU_CHARACTER(L'₀')
+	#define DAIJOUBU_SUBSCRIPT_HIGH DAIJOUBU_CHARACTER(L'₉')
+	#define DAIJOUBU_SUPERSCRIPT_FIRST_LOW DAIJOUBU_CHARACTER(L'²')
+	#define DAIJOUBU_SUPERSCRIPT_FIRST_HIGH DAIJOUBU_CHARACTER(L'¹')
+	#define DAIJOUBU_SUPERSCRIPT_SECOND_LOW DAIJOUBU_CHARACTER(L'⁰')
+	#define DAIJOUBU_SUPERSCRIPT_SECOND_HIGH DAIJOUBU_CHARACTER(L'⁹')
 
 	enum {
 		DAIJOUBU_CONSTANT_E = 0,
@@ -356,6 +362,14 @@ namespace DAIJOUBU {
 	#define DAIJOUBU_TOKEN_SUBTYPE_STRINGS(_TYPE_) \
 		((_TYPE_) > (unsigned) DAIJOUBU_TOKEN_MAX ? NULL : \
 		DAIJOUBU_TOKEN_SUBTYPE_STRS[_TYPE_])
+
+	extern std::wstring convert_subscript_to_string(
+		__in const std::wstring &input
+		);
+
+	extern std::wstring convert_superscript_to_string(
+		__in const std::wstring &input
+		);
 
 	extern uint16_t determine_token_subtype(
 		__in const std::wstring &input,

@@ -205,11 +205,49 @@ namespace DAIJOUBU {
 
 			protected:
 
-				void enumerate_literal_string(void);
+				void enumerate_class_control(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_class_letter(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_class_mark(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_class_number(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_class_punctuation(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_class_symbol(
+					__in daijoubu_unicode_t type
+					);
+
+				void enumerate_keyword(void);
+
+				void enumerate_operator(void);
+
+				void enumerate_subscript(void);
+
+				void enumerate_string(void);
+
+				void enumerate_superscript(void);
+
+				void enumerate_symbol(void);
 
 				daijoubu_comment_t is_comment_delimiter(void);
 
 				daijoubu_string_t is_string_delimiter(void);
+
+				bool is_subscript(void);
+
+				bool is_superscript(void);
 
 				void skip_comment_block(void);
 

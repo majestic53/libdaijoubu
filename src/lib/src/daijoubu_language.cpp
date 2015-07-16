@@ -43,6 +43,53 @@ namespace DAIJOUBU {
 		36, 2, 10, 16, 8,
 		};
 
+	std::wstring 
+	convert_subscript_to_string(
+		__in const std::wstring &input
+		)
+	{
+		std::wstring result;
+		std::wstring::const_iterator iter;
+
+		for(iter = input.begin(); iter != input.end(); ++iter) {
+			result += ((*iter - DAIJOUBU_SUBSCRIPT_LOW) + L'0');
+		}
+
+		return result;
+	}
+
+	std::wstring 
+	convert_superscript_to_string(
+		__in const std::wstring &input
+		)
+	{
+		std::wstring result;
+		std::wstring::const_iterator iter;
+
+		for(iter = input.begin(); iter != input.end(); ++iter) {
+
+			switch(*iter) {
+				case L'⁰':
+					result += L'0';
+					break;
+				case L'¹':
+					result += L'1';
+					break;
+				case L'²':
+					result += L'2';
+					break;
+				case L'³':
+					result += L'3';
+					break;
+				default:
+					result += ((*iter - L'⁴') + L'4');
+					break;
+			}
+		}
+
+		return result;
+	}
+
 	uint16_t 
 	determine_token_subtype(
 		__in const std::wstring &input,

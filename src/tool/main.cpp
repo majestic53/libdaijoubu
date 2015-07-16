@@ -42,9 +42,8 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer lex(L"");
-
-		std::wcout << unicode_string_as_value(L"−3.14", DAIJOUBU_RADIX_DECIMAL) << std::endl;
+		daijoubu_lexer lex(L"“This is a test_9876”\n<<This is a test_0123>>");
+		lex.discover();
 
 		std::wcout << L"Size: " << lex.size() << std::endl;
 
