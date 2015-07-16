@@ -247,12 +247,12 @@ namespace DAIJOUBU {
 				THROW_DAIJOUBU_UID_EXCEPTION(DAIJOUBU_UID_EXCEPTION_UNINITIALIZED);
 			}
 
-			if(m_uid_next < INVALID_UID) {
-				result = m_uid_next++;
-			} else if(!m_uid_surplus.empty()) {
+			if(!m_uid_surplus.empty()) {
 				iter = m_uid_surplus.begin();
 				result = *iter;
 				m_uid_surplus.erase(iter);
+			} else if(m_uid_next < INVALID_UID) {
+				result = m_uid_next++;
 			} else {
 				THROW_DAIJOUBU_UID_EXCEPTION(DAIJOUBU_UID_EXCEPTION_RESOURCES);
 			}

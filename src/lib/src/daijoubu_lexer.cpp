@@ -620,9 +620,9 @@ namespace DAIJOUBU {
 					break;
 				case DAIJOUBU_UNICODE_CLASS_NO:
 
-					if(is_subscript()) {
+					if(is_subscript_character()) {
 						enumerate_subscript();
-					} else if(is_superscript()) {
+					} else if(is_superscript_character()) {
 						enumerate_superscript();
 					} else {
 						supported = false;
@@ -837,7 +837,7 @@ namespace DAIJOUBU {
 				}
 
 				move_next_character();
-			} while(is_subscript());
+			} while(is_subscript_character());
 
 			token_insert(token_add(DAIJOUBU_TOKEN_SUBSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
@@ -861,7 +861,7 @@ namespace DAIJOUBU {
 				}
 
 				move_next_character();
-			} while(is_superscript());
+			} while(is_superscript_character());
 
 			token_insert(token_add(DAIJOUBU_TOKEN_SUPERSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
@@ -980,7 +980,7 @@ namespace DAIJOUBU {
 		}
 
 		bool 
-		_daijoubu_lexer::is_subscript(void)
+		_daijoubu_lexer::is_subscript_character(void)
 		{
 			wchar_t ch;
 
@@ -993,7 +993,7 @@ namespace DAIJOUBU {
 		}
 
 		bool 
-		_daijoubu_lexer::is_superscript(void)
+		_daijoubu_lexer::is_superscript_character(void)
 		{
 			wchar_t ch;
 

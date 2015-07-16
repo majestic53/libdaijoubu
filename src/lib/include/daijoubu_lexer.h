@@ -245,9 +245,9 @@ namespace DAIJOUBU {
 
 				daijoubu_string_t is_string_delimiter(void);
 
-				bool is_subscript(void);
+				bool is_subscript_character(void);
 
-				bool is_superscript(void);
+				bool is_superscript_character(void);
 
 				void skip_comment_block(void);
 

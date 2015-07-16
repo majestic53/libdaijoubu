@@ -42,7 +42,7 @@ main(void)
 
 		// TODO
 
-		daijoubu_lexer lex(L"“This is a test_9876”\n<<This is a test_0123>>");
+		daijoubu_lexer lex(L"");
 		lex.discover();
 
 		std::wcout << L"Size: " << lex.size() << std::endl;
