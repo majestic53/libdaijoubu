@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1529
+*Updated: 7/16/2015*
+
+* Added constant/control/identifier/modifier/operator (parital)/type token support
+
 *Updated: 7/15/2015*
 
 * Added token enumeration (incomplete)

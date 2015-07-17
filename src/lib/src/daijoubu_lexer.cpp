@@ -541,16 +541,18 @@ namespace DAIJOUBU {
 
 			switch(type) {
 				case DAIJOUBU_UNICODE_CLASS_LC:
-				case DAIJOUBU_UNICODE_CLASS_LL:
-				case DAIJOUBU_UNICODE_CLASS_LM:
-				case DAIJOUBU_UNICODE_CLASS_LO:
-				case DAIJOUBU_UNICODE_CLASS_LT:
-				case DAIJOUBU_UNICODE_CLASS_LU:
 
 					// TODO
 					supported = false;
 					// ---
 
+					break;
+				case DAIJOUBU_UNICODE_CLASS_LL:
+				case DAIJOUBU_UNICODE_CLASS_LM:
+				case DAIJOUBU_UNICODE_CLASS_LO:
+				case DAIJOUBU_UNICODE_CLASS_LT:
+				case DAIJOUBU_UNICODE_CLASS_LU:
+					enumerate_keyword();
 					break;
 				default:
 					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
@@ -611,12 +613,14 @@ namespace DAIJOUBU {
 
 			switch(type) {
 				case DAIJOUBU_UNICODE_CLASS_ND:
-				case DAIJOUBU_UNICODE_CLASS_NL:
 
 					// TODO
 					supported = false;
 					// ---
 
+					break;
+				case DAIJOUBU_UNICODE_CLASS_NL:
+					enumerate_keyword();
 					break;
 				case DAIJOUBU_UNICODE_CLASS_NO:
 
@@ -651,7 +655,6 @@ namespace DAIJOUBU {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			switch(type) {
-				case DAIJOUBU_UNICODE_CLASS_PC:
 				case DAIJOUBU_UNICODE_CLASS_PD:
 				case DAIJOUBU_UNICODE_CLASS_PE:
 				case DAIJOUBU_UNICODE_CLASS_PF:
@@ -662,6 +665,18 @@ namespace DAIJOUBU {
 					supported = false;
 					// ---
 
+					break;
+				case DAIJOUBU_UNICODE_CLASS_PC:
+
+					if(character() == DAIJOUBU_IDENTIFIER_LOW_LINE) {
+						enumerate_keyword();
+					} else {
+
+						// TODO
+						supported = false;
+						// ---
+
+					}
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PI:
 
@@ -711,6 +726,8 @@ namespace DAIJOUBU {
 
 					if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_SIMPLE_TYPE) {
 						enumerate_string();
+					} else if(is_modifier_character()) {
+						enumerate_modifier();
 					} else {
 
 						// TODO
@@ -734,6 +751,131 @@ namespace DAIJOUBU {
 
 		void 
 		_daijoubu_lexer::enumerate_keyword(void)
+		{			
+			std::wstring text;
+			bool terminated = false, lm_ch = false;
+			uint16_t subtype = INVALID_TOKEN_SUBTYPE;
+			daijoubu_token_t type = DAIJOUBU_TOKEN_IDENTIFIER;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			switch(character_class()) {
+				case DAIJOUBU_UNICODE_CLASS_LM:
+					lm_ch = true;
+				case DAIJOUBU_UNICODE_CLASS_LL:
+				case DAIJOUBU_UNICODE_CLASS_LO:
+				case DAIJOUBU_UNICODE_CLASS_LT:
+				case DAIJOUBU_UNICODE_CLASS_LU:
+				case DAIJOUBU_UNICODE_CLASS_NL:
+					text += character();
+					break;
+				case DAIJOUBU_UNICODE_CLASS_PC:
+
+					if(character() == DAIJOUBU_IDENTIFIER_LOW_LINE) {
+						text += character();
+					} else {
+						THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+							DAIJOUBU_LEXER_EXCEPTION_EXPECTING_KEYWORD,
+							L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+					}
+
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_KEYWORD,
+						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+
+			while(!terminated) {
+
+				if(!has_next_character()) {
+					terminated = true;
+					continue;
+				}
+
+				move_next_character();
+
+				switch(character_class()) {
+					case DAIJOUBU_UNICODE_CLASS_LL:
+					case DAIJOUBU_UNICODE_CLASS_LM:
+					case DAIJOUBU_UNICODE_CLASS_LO:
+					case DAIJOUBU_UNICODE_CLASS_LT:
+					case DAIJOUBU_UNICODE_CLASS_LU:
+					case DAIJOUBU_UNICODE_CLASS_MC:
+					case DAIJOUBU_UNICODE_CLASS_MN:
+					case DAIJOUBU_UNICODE_CLASS_ND:
+					case DAIJOUBU_UNICODE_CLASS_NL:
+						text += character();
+						break;
+					case DAIJOUBU_UNICODE_CLASS_PC:
+
+						if(character() == DAIJOUBU_IDENTIFIER_LOW_LINE) {
+							text += character();
+						} else {
+							terminated = true;
+							continue;
+						}
+
+						break;
+					default:
+						terminated = true;
+						continue;
+				}
+			}
+
+			if(IS_DAIJOUBU_CONSTANT_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_CONSTANT;
+				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_CONTROL_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_CONTROL;
+				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_LITERAL_BOOLEAN_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_LITERAL_BOOLEAN;
+				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_MODIFIER_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_MODIFIER;
+				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_OPERATOR;
+				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_TYPE_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_TYPE;
+				subtype = determine_token_subtype(text, type);
+			} else if(lm_ch && (text.size() == 1)) {
+				type = DAIJOUBU_TOKEN_MODIFIER;
+			}
+
+			token_insert(token_add(type));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.subtype() = subtype;
+			tok.text() = text;
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_modifier(void)
+		{
+			std::wstring text;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			text += character();
+			move_next_character();
+
+			if(!IS_DAIJOUBU_MODIFIER_TYPE(text)) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_EXPECTING_MODIFIER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+
+			token_insert(token_add(DAIJOUBU_TOKEN_MODIFIER));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.subtype() = determine_token_subtype(text, DAIJOUBU_TOKEN_MODIFIER);			
+			tok.text() = text;
+			
+		}
+
+		void 
+		_daijoubu_lexer::enumerate_number(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
@@ -936,6 +1078,13 @@ namespace DAIJOUBU {
 			}
 
 			return result;
+		}
+
+		bool 
+		_daijoubu_lexer::is_modifier_character(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return IS_DAIJOUBU_MODIFIER_TYPE(std::wstring(1, character()));
 		}
 
 		daijoubu_string_t 

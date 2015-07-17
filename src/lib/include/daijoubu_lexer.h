@@ -231,6 +231,10 @@ namespace DAIJOUBU {
 
 				void enumerate_keyword(void);
 
+				void enumerate_modifier(void);
+
+				void enumerate_number(void);
+
 				void enumerate_operator(void);
 
 				void enumerate_string(void);
@@ -242,6 +246,8 @@ namespace DAIJOUBU {
 				void enumerate_symbol(void);
 
 				daijoubu_comment_t is_comment_delimiter(void);
+
+				bool is_modifier_character(void);
 
 				daijoubu_string_t is_string_delimiter(void);
 

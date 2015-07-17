@@ -5,23 +5,22 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 ---
 
-constant ::= 'e' | 'π' | 'null'
+[X] constant ::= 'e' | 'π' | 'null'
 
-control ::= 'break' | 'continue' | 'elif' | 'else' | 'final' | 'for' | 'if' | 'return' 
+[X] control ::= 'break' | 'continue' | 'elif' | 'else' | 'final' | 'for' | 'if' | 'return' 
 		| 'show' | 'switch'
 
-identifier ::= [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<Cf>|<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Mc>|<Mn>|<Nd>|<Nl>|<Pc>|'_']*
-	| [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<modifier> | <subscript>]*
+[X] identifier ::= [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<Cf>|<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Mc>|<Mn>|<Nd>|<Nl>|<Pc>|'_']*
 
-modifier ::= <Lm> | '₋' | '₊' | '₌'
+[X] modifier ::= <Lm> | '₋' | '₊' | '₌'
 
-literal_boolean ::= 'false' | 'true'
+[ ] literal_boolean ::= 'false' | 'true'
 
-literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
+[ ] literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
 
-literal_string ::= '“'<UTF8_char>*'”'
+[X] literal_string ::= '“'<UTF8_char>*'”'
 
-operator ::= '+'		// addition
+[ ] operator ::= '+'		// addition
 	| 'arccsc'		// arc-cosecant
 	| 'arccos'		// arc-cosine
 	| 'arccot'		// arc-cotangent
@@ -72,11 +71,11 @@ operator ::= '+'		// addition
 	| '¦'		('--')	// unary decrement
 	| '‡'		('++')	// unary increment
 
-subscript ::= [₀-₉]+
+[X] subscript ::= [₀-₉]+
 
-superscript ::= [⁰-⁹]+
+[X] superscript ::= [⁰-⁹]+
 
-symbol ::= ']'			// access bracket close
+[ ] symbol ::= ']'			// access bracket close
 	| '['			// access bracket open
 	| ','			// argument delimiter
 	| '⇐'		('<-')	// assignment
@@ -92,4 +91,4 @@ symbol ::= ']'			// access bracket close
 	| ';'			// statement terminator
 	| ':'			// ternary delimiter
 
-type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'
+[X] type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'

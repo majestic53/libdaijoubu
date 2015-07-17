@@ -1,0 +1,23 @@
+; CONSTANT
+
+e π null
+
+; CONTROL
+
+break continue elif else final for if return show switch
+
+; LITERAL BOOLEAN
+
+false true
+
+; MODIFIER
+
+ʰ ʱ ʲ ʳ
+
+; OPERATOR
+
+arccsc arccos arccot arcsec arcsin arctan csc cos log ln sec sin tan
+
+; TYPE
+
+bool byte float int string ubyte uint
