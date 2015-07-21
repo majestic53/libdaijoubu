@@ -72,9 +72,11 @@ namespace DAIJOUBU {
 	{
 		int len;
 		va_list args;
-		std::wstring buf;
+		size_t iter = 0;
+		std::wstring buf;		
 		std::wstringstream result;
 		const wchar_t *buf_err = NULL;
+		std::wstring::iterator ch_iter;
 
 		result << except;
 
@@ -102,10 +104,19 @@ namespace DAIJOUBU {
 		}
 
 		if(buf_err) {
-			result << L": " << buf_err;
+			result << L": ";
+
+			for(; iter < std::wstring(buf_err).size(); ++iter) {
+				result << (buf_err[iter] != DAIJOUBU_CHARACTER_END ? buf_err[iter] : L' ');
+			}
+
 			buf_err = NULL;
 		} else if(!buf.empty()) {
-			result << L": " << buf;
+			result << L": ";
+
+			for(ch_iter = buf.begin(); ch_iter != buf.end(); ++ch_iter) {
+				result << (*ch_iter != DAIJOUBU_CHARACTER_END ? *ch_iter : L' ');
+			}
 		}
 
 #ifndef NDEBUG

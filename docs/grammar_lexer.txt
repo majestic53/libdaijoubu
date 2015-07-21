@@ -14,13 +14,13 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 [X] modifier ::= <Lm> | '₋' | '₊' | '₌'
 
-[ ] literal_boolean ::= 'false' | 'true'
+[X] literal_boolean ::= 'false' | 'true'
 
 [ ] literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
 
 [X] literal_string ::= '“'<UTF8_char>*'”'
 
-[ ] operator ::= '+'		// addition
+[X] operator ::= '+'		// addition
 	| 'arccsc'		// arc-cosecant
 	| 'arccos'		// arc-cosine
 	| 'arccot'		// arc-cotangent
@@ -75,7 +75,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 [X] superscript ::= [⁰-⁹]+
 
-[ ] symbol ::= ']'			// access bracket close
+[X] symbol ::= ']'		// access bracket close
 	| '['			// access bracket open
 	| ','			// argument delimiter
 	| '⇐'		('<-')	// assignment

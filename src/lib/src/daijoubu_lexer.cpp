@@ -655,15 +655,13 @@ namespace DAIJOUBU {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			switch(type) {
-				case DAIJOUBU_UNICODE_CLASS_PD:
-				case DAIJOUBU_UNICODE_CLASS_PE:
 				case DAIJOUBU_UNICODE_CLASS_PF:
-				case DAIJOUBU_UNICODE_CLASS_PO:
-				case DAIJOUBU_UNICODE_CLASS_PS:
 
 					// TODO
 					supported = false;
 					// ---
+
+					std::wcout << DAIJOUBU_UNICODE_CLASS_STRING(type).c_str() << std::endl;
 
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PC:
@@ -677,6 +675,12 @@ namespace DAIJOUBU {
 						// ---
 
 					}
+					break;
+				case DAIJOUBU_UNICODE_CLASS_PD:
+				case DAIJOUBU_UNICODE_CLASS_PE:
+				case DAIJOUBU_UNICODE_CLASS_PO:
+				case DAIJOUBU_UNICODE_CLASS_PS:
+					enumerate_symbol();
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PI:
 
@@ -716,11 +720,7 @@ namespace DAIJOUBU {
 				case DAIJOUBU_UNICODE_CLASS_SC:
 				case DAIJOUBU_UNICODE_CLASS_SK:
 				case DAIJOUBU_UNICODE_CLASS_SO:
-
-					// TODO
-					supported = false;
-					// ---
-
+					enumerate_symbol();
 					break;
 				case DAIJOUBU_UNICODE_CLASS_SM:
 
@@ -729,11 +729,7 @@ namespace DAIJOUBU {
 					} else if(is_modifier_character()) {
 						enumerate_modifier();
 					} else {
-
-						// TODO
-						supported = false;
-						// ---
-
+						enumerate_symbol();
 					}
 					break;
 				default:
@@ -883,14 +879,6 @@ namespace DAIJOUBU {
 		}
 
 		void 
-		_daijoubu_lexer::enumerate_operator(void)
-		{
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO
-		}
-
-		void 
 		_daijoubu_lexer::enumerate_string(void)
 		{
 			std::wstring text;
@@ -1015,9 +1003,34 @@ namespace DAIJOUBU {
 		void 
 		_daijoubu_lexer::enumerate_symbol(void)
 		{
+			std::wstring text;
+			daijoubu_token_t type = DAIJOUBU_TOKEN_SYMBOL;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			do {
+				text += character();
+
+				if(!has_next_character()) {
+					break;
+				}
+
+				move_next_character();
+			} while(IS_DAIJOUBU_OPERATOR_TYPE(text + character())
+					|| IS_DAIJOUBU_SYMBOL_TYPE(text + character()));
+
+			if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_OPERATOR;
+			} else if(!IS_DAIJOUBU_SYMBOL_TYPE(text)) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_UNKNOWN_SYMBOL,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+
+			token_insert(token_add(type));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.subtype() = determine_token_subtype(text, type);
+			tok.text() = text;
 		}
 
 		bool 
