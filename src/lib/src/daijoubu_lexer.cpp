@@ -511,11 +511,7 @@ namespace DAIJOUBU {
 				case DAIJOUBU_UNICODE_CLASS_CN:
 				case DAIJOUBU_UNICODE_CLASS_CO:
 				case DAIJOUBU_UNICODE_CLASS_CS:
-
-					// TODO
 					supported = false;
-					// ---
-
 					break;
 				default:
 					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
@@ -541,11 +537,7 @@ namespace DAIJOUBU {
 
 			switch(type) {
 				case DAIJOUBU_UNICODE_CLASS_LC:
-
-					// TODO
 					supported = false;
-					// ---
-
 					break;
 				case DAIJOUBU_UNICODE_CLASS_LL:
 				case DAIJOUBU_UNICODE_CLASS_LM:
@@ -580,11 +572,7 @@ namespace DAIJOUBU {
 				case DAIJOUBU_UNICODE_CLASS_MC:
 				case DAIJOUBU_UNICODE_CLASS_ME:
 				case DAIJOUBU_UNICODE_CLASS_MN:
-
-					// TODO
 					supported = false;
-					// ---
-
 					break;
 				default:
 					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
@@ -653,13 +641,7 @@ namespace DAIJOUBU {
 
 			switch(type) {
 				case DAIJOUBU_UNICODE_CLASS_PF:
-
-					// TODO
 					supported = false;
-					// ---
-
-					std::wcout << DAIJOUBU_UNICODE_CLASS_STRING(type).c_str() << std::endl;
-
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PC:
 
@@ -685,11 +667,7 @@ namespace DAIJOUBU {
 							enumerate_keyword();
 						}
 					} else {
-
-						// TODO
 						supported = false;
-						// ---
-
 					}
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PD:
@@ -703,11 +681,7 @@ namespace DAIJOUBU {
 					if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_TYPE) {
 						enumerate_string();
 					} else {
-
-						// TODO
 						supported = false;
-						// ---
-
 					}
 					break;
 				default:
