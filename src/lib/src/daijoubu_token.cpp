@@ -187,24 +187,13 @@ namespace DAIJOUBU {
 			std::wstring::const_iterator iter;
 
 			if(verbose) {
-				result << L"(" << VALUE_AS_HEX(daijoubu_uid, token.m_uid) << L" ";
+				result << L"(" << VALUE_AS_HEX(daijoubu_uid, token.m_uid) << L") ";
 			}
 
 			result << L"[" << DAIJOUBU_TOKEN_STRING(token.m_type);
 
-			switch(token.m_type) {
-				case DAIJOUBU_TOKEN_BEGIN:
-				case DAIJOUBU_TOKEN_END:
-					break;
-				default:
-					result << L", ";
-
-					if(token.m_subtype == INVALID_TOKEN_SUBTYPE) {
-						result << INVALID;
-					} else {
-						result << VALUE_AS_HEX(uint16_t, token.m_subtype);
-					}
-					break;
+			if(token.m_subtype != INVALID_TOKEN_SUBTYPE) {
+				result << L", " << token_subtype_as_unicode_string(token.m_type, token.m_subtype);
 			}
 
 			result << L"]";
@@ -224,8 +213,20 @@ namespace DAIJOUBU {
 				case DAIJOUBU_TOKEN_BEGIN:
 				case DAIJOUBU_TOKEN_END:
 					break;
-				default:
+				case DAIJOUBU_TOKEN_LITERAL_NUMERIC:
+				case DAIJOUBU_TOKEN_SUBSCRIPT:
+				case DAIJOUBU_TOKEN_SUPERSCRIPT:
 					result << L" " << token.m_value;
+					break;
+				default:
+					break;
+			}
+
+			switch(token.m_type) {
+				case DAIJOUBU_TOKEN_BEGIN:
+				case DAIJOUBU_TOKEN_END:
+					break;
+				default:
 
 					if(verbose) {
 						result << L":";
@@ -240,13 +241,12 @@ namespace DAIJOUBU {
 
 							result << L"\"[" << token.m_offset << L"]";
 						}
-					}
-					break;
-			}
 
-			if(verbose) {
-				result << L" (" << token.m_position << L", {"
-					<< token.m_row << L", " << token.m_column << L"})";
+						result << L" (" << token.m_position << L", {"
+							<< token.m_row << L", " << token.m_column << L"})";
+					}
+
+					break;
 			}
 
 			return CHECK_STRING(result.str());

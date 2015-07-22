@@ -247,6 +247,10 @@ namespace DAIJOUBU {
 
 				bool is_modifier_character(void);
 
+				bool is_number_character(
+					__in daijoubu_radix_t radix
+					);
+
 				daijoubu_string_t is_string_delimiter(void);
 
 				bool is_subscript_character(void);
@@ -293,7 +297,7 @@ namespace DAIJOUBU {
 					);
 
 				std::vector<daijoubu_uid> m_tok_list;
-	
+
 				size_t m_tok_position;
 
 			private:

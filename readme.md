@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1530
+*Updated: 7/21/2015*
+
+* Added number token support
+* Minor code cleanup
+
 *Updated: 7/20/2015*
 
 * Added operator/symbol token support

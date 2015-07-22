@@ -192,9 +192,6 @@ namespace DAIJOUBU {
 				case DAIJOUBU_RADIX_DECIMAL:
 
 					if(input.at(iter) == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION) {
-
-						std::wcout << L"TEST" << std::endl;
-
 						negative = true;
 						++iter;
 					}
@@ -262,7 +259,7 @@ namespace DAIJOUBU {
 	}
 
 	std::wstring 
-	token_subtype_as_string(
+	token_subtype_as_unicode_string(
 		__in daijoubu_token_t type,
 		__in uint16_t subtype
 		)

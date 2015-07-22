@@ -316,7 +316,7 @@ namespace DAIJOUBU {
 
 			++m_ch_position;
 
-			return result;
+			return character();
 		}
 
 		wchar_t 
@@ -613,11 +613,8 @@ namespace DAIJOUBU {
 
 			switch(type) {
 				case DAIJOUBU_UNICODE_CLASS_ND:
-
-					// TODO
-					supported = false;
-					// ---
-
+				case DAIJOUBU_UNICODE_CLASS_SM:
+					enumerate_number();
 					break;
 				case DAIJOUBU_UNICODE_CLASS_NL:
 					enumerate_keyword();
@@ -667,7 +664,26 @@ namespace DAIJOUBU {
 				case DAIJOUBU_UNICODE_CLASS_PC:
 
 					if(character() == DAIJOUBU_IDENTIFIER_LOW_LINE) {
-						enumerate_keyword();
+
+						if(has_next_character()) {
+							move_next_character();
+
+							switch(character_class()) {
+								case DAIJOUBU_UNICODE_CLASS_SC:
+								case DAIJOUBU_UNICODE_CLASS_SK:
+								case DAIJOUBU_UNICODE_CLASS_SO:
+								case DAIJOUBU_UNICODE_CLASS_SM:
+									move_previous_character();
+									enumerate_symbol();
+									break;
+								default:
+									move_previous_character();
+									enumerate_keyword();
+									break;
+							}
+						} else {
+							enumerate_keyword();
+						}
 					} else {
 
 						// TODO
@@ -724,7 +740,22 @@ namespace DAIJOUBU {
 					break;
 				case DAIJOUBU_UNICODE_CLASS_SM:
 
-					if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_SIMPLE_TYPE) {
+					if(character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION) {
+
+						if(has_next_character()) {
+							move_next_character();
+
+							if(is_number_character(DAIJOUBU_RADIX_DECIMAL)) {
+								move_previous_character();
+								enumerate_number();
+							} else {
+								move_previous_character();
+								enumerate_symbol();
+							}
+						} else {
+							enumerate_symbol();
+						}
+					} else if(is_string_delimiter() == DAIJOUBU_STRING_OPEN_SIMPLE_TYPE) {
 						enumerate_string();
 					} else if(is_modifier_character()) {
 						enumerate_modifier();
@@ -844,7 +875,11 @@ namespace DAIJOUBU {
 			token_insert(token_add(type));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
 			tok.subtype() = subtype;
-			tok.text() = text;
+
+			if((type != DAIJOUBU_TOKEN_IDENTIFIER)
+					&& (subtype == INVALID_TOKEN_SUBTYPE)) {
+				tok.text() = text;
+			}
 		}
 
 		void 
@@ -865,17 +900,106 @@ namespace DAIJOUBU {
 
 			token_insert(token_add(DAIJOUBU_TOKEN_MODIFIER));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
-			tok.subtype() = determine_token_subtype(text, DAIJOUBU_TOKEN_MODIFIER);			
-			tok.text() = text;
-			
+
+			tok.subtype() = determine_token_subtype(text, DAIJOUBU_TOKEN_MODIFIER);
+			if(tok.subtype() == INVALID_TOKEN_SUBTYPE) {
+				tok.text() = text;
+			}
 		}
 
 		void 
 		_daijoubu_lexer::enumerate_number(void)
 		{
+			std::wstring text;
+			bool negative = false;
+			daijoubu_radix_t radix = DAIJOUBU_RADIX_DECIMAL;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			if(character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION) {
+				text += character();
+				negative = true;
+				move_next_character();
+			} else if(character_class() != DAIJOUBU_UNICODE_CLASS_ND) {
+				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+					DAIJOUBU_LEXER_EXCEPTION_EXPECTING_NUMBER,
+					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+
+			if(character() == DAIJOUBU_LITERAL_NUMERIC_DELIMITER_PREFIX) {
+				move_next_character();
+
+				switch(character()) {
+					case DAIJOUBU_LITERAL_NUMERIC_DELIMITER_BINARY:
+
+						if(negative) {
+							THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+								DAIJOUBU_LEXER_EXCEPTION_INVALID_NUMBER,
+								L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+						}
+
+						radix = DAIJOUBU_RADIX_BINARY;
+						move_next_character();
+						break;
+					case DAIJOUBU_LITERAL_NUMERIC_DELIMITER_HEXIDECIMAL:
+
+						if(negative) {
+							THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+								DAIJOUBU_LEXER_EXCEPTION_INVALID_NUMBER,
+								L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+						}
+
+						radix = DAIJOUBU_RADIX_HEXIDECIMAL;
+						move_next_character();
+						break;
+					case DAIJOUBU_LITERAL_NUMERIC_DELIMITER_OCTAL:
+
+						if(negative) {
+							THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+								DAIJOUBU_LEXER_EXCEPTION_INVALID_NUMBER,
+								L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+						}
+
+						radix = DAIJOUBU_RADIX_OCTAL;
+						move_next_character();
+						break;
+					default:
+						text += DAIJOUBU_LITERAL_NUMERIC_DELIMITER_PREFIX;
+						break;
+				}
+			}
+
+			switch(radix) {
+				case DAIJOUBU_RADIX_BINARY:
+				case DAIJOUBU_RADIX_DECIMAL:
+				case DAIJOUBU_RADIX_HEXIDECIMAL:
+				case DAIJOUBU_RADIX_OCTAL:
+
+					while(is_number_character(radix)) {
+						text += character();
+						move_next_character();
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_RADIX,
+						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+			}
+
+			if((radix == DAIJOUBU_RADIX_DECIMAL)
+					&& (character() == DAIJOUBU_LITERAL_NUMERIC_DECIMAL)) {
+				text += character();
+				move_next_character();
+
+				while(is_number_character(radix)) {
+					text += character();
+					move_next_character();
+				}
+			}
+
+			token_insert(token_add(DAIJOUBU_TOKEN_LITERAL_NUMERIC));
+			daijoubu_token &tok = token_at(m_tok_position + 1);
+			tok.value() = unicode_string_as_value(text, radix);
 		}
 
 		void 
@@ -900,7 +1024,6 @@ namespace DAIJOUBU {
 					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
 						DAIJOUBU_LEXER_EXCEPTION_EXPECTING_LITERAL_STRING,
 						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
-					break;
 			}
 
 			while(has_next_character() && !terminated) {
@@ -971,7 +1094,6 @@ namespace DAIJOUBU {
 
 			token_insert(token_add(DAIJOUBU_TOKEN_SUBSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
-			tok.text() = text;
 			tok.value() = unicode_string_as_value(convert_subscript_to_string(text), 
 				DAIJOUBU_RADIX_DECIMAL);
 		}
@@ -995,7 +1117,6 @@ namespace DAIJOUBU {
 
 			token_insert(token_add(DAIJOUBU_TOKEN_SUPERSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
-			tok.text() = text;
 			tok.value() = unicode_string_as_value(convert_superscript_to_string(text), 
 				DAIJOUBU_RADIX_DECIMAL);
 		}
@@ -1017,20 +1138,24 @@ namespace DAIJOUBU {
 
 				move_next_character();
 			} while(IS_DAIJOUBU_OPERATOR_TYPE(text + character())
-					|| IS_DAIJOUBU_SYMBOL_TYPE(text + character()));
+					|| IS_DAIJOUBU_SYMBOL_TYPE(text + character())
+					|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));
 
 			if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
 				type = DAIJOUBU_TOKEN_OPERATOR;
 			} else if(!IS_DAIJOUBU_SYMBOL_TYPE(text)) {
 				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
-					DAIJOUBU_LEXER_EXCEPTION_UNKNOWN_SYMBOL,
+					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_SYMBOL,
 					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
 			}
 
 			token_insert(token_add(type));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
+
 			tok.subtype() = determine_token_subtype(text, type);
-			tok.text() = text;
+			if(tok.subtype() == INVALID_TOKEN_SUBTYPE) {
+				tok.text() = text;
+			}
 		}
 
 		bool 
@@ -1098,6 +1223,46 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return IS_DAIJOUBU_MODIFIER_TYPE(std::wstring(1, character()));
+		}
+
+		bool 
+		_daijoubu_lexer::is_number_character(
+			__in daijoubu_radix_t radix
+			)
+		{
+			wchar_t ch;
+			bool result = false;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			ch = character();
+
+			switch(radix) {
+				case DAIJOUBU_RADIX_BINARY:
+					result = ((ch == DAIJOUBU_LITERAL_NUMERIC_BINARY_LOW) 
+						|| (ch == DAIJOUBU_LITERAL_NUMERIC_BINARY_HIGH));
+					break;
+				case DAIJOUBU_RADIX_DECIMAL:
+					result = ((ch >= DAIJOUBU_LITERAL_NUMERIC_DECIMAL_LOW) 
+						&& (ch <= DAIJOUBU_LITERAL_NUMERIC_DECIMAL_HIGH));
+					break;
+				case DAIJOUBU_RADIX_HEXIDECIMAL:
+					result = (((ch >= DAIJOUBU_LITERAL_NUMERIC_HEXIDECIMAL_FIRST_LOW) 
+						&& (ch <= DAIJOUBU_LITERAL_NUMERIC_HEXIDECIMAL_FIRST_HIGH))
+						|| ((ch >= DAIJOUBU_LITERAL_NUMERIC_HEXIDECIMAL_SECOND_LOW) 
+						&& (ch <= DAIJOUBU_LITERAL_NUMERIC_HEXIDECIMAL_SECOND_HIGH)));
+					break;
+				case DAIJOUBU_RADIX_OCTAL:
+					result = ((ch >= DAIJOUBU_LITERAL_NUMERIC_OCTAL_LOW) 
+						&& (ch <= DAIJOUBU_LITERAL_NUMERIC_OCTAL_HIGH));
+					break;
+				default:
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_RADIX,
+						L"%lu", radix);
+			}
+
+			return result;
 		}
 
 		daijoubu_string_t 
