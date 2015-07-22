@@ -60,7 +60,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| '%'			// modulo
 	| '⋅'		('*')	// multiplication
 	| 'ln'			// natural logarithm
-	| '≠'		('~=')	// not equalsz
+	| '≠'		('~=')	// not equals
 	| '☘'		('??')	// random
 	| 'sec'			// secant
 	| 'sin'			// sine
