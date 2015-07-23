@@ -99,38 +99,37 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 [X] type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'
 
-unused ::= 
-	| '∠' 			// angle
-	| '≈' 			// approximately equal
-	| '⬛' 			// black large square
-	| '∘' 			// circle operator
-	| '⁄' 			// combining solidus
-	| '†' 			// dagger
-	| '°' 			// degree
-	| '‖' 			// double vertical bar
-	| '♫'			// eighths note
-	| '—' 			// em dash
-	| '≡' 			// equivalent
-	| '█' 			// full block
-	| '»' 			// guillemet close
-	| '«' 			// guillemet open
-	| '⌂' 			// house
-	| '☞' 			// index
-	| '∞' 			// infinity
-	| '∫' 			// integral
-	| '‽' 			// interrobang
-	| '⸮' 			// irony
-	| '◊' 			// lozenge
-	| '∇'			// nabla
-	| '∂'			// partial derivative
-	| '¶' 			// pilcrow
-	| '±' 			// plus-minus
-	| '∝' 			// proportionality
-	| '§' 			// section
-	| '★' 			// star
-	| '₎'			// subscript parenthesis close
-	| '₍'			// subscript parenthesis open
-	| '∑' 			// summation
-	| '⟩' 			// triangle bracket close
-	| '⟨' 			// triangle bracket open
-	| '⬜' 			// white large square
+unused ::= '∠' 	(TBD)	// angle
+	| '≈' 		(TBD)	// approximately equal
+	| '⬛' 		(TBD)	// black large square
+	| '∘' 		(TBD)	// circle operator
+	| '⁄' 		(TBD)	// combining solidus
+	| '†' 		(TBD)	// dagger
+	| '°' 		(TBD)	// degree
+	| '‖' 		(TBD)	// double vertical bar
+	| '♫'		(TBD)	// eighths note
+	| '—' 		(TBD)	// em dash
+	| '≡' 		(TBD)	// equivalent
+	| '█' 		(TBD)	// full block
+	| '»' 		(TBD)	// guillemet close
+	| '«' 		(TBD)	// guillemet open
+	| '⌂' 		(TBD)	// house
+	| '☞' 		(TBD)	// index
+	| '∞' 		(TBD)	// infinity
+	| '∫' 		(TBD)	// integral
+	| '‽' 		(TBD)	// interrobang
+	| '⸮' 		(TBD)	// irony
+	| '◊' 		(TBD)	// lozenge
+	| '∇'		(TBD)	// nabla
+	| '∂'		(TBD)	// partial derivative
+	| '¶' 		(TBD)	// pilcrow
+	| '±' 		(TBD)	// plus-minus
+	| '∝' 		(TBD)	// proportionality
+	| '§' 		(TBD)	// section
+	| '★' 		(TBD)	// star
+	| '₎'		(TBD)	// subscript parenthesis close
+	| '₍'		(TBD)	// subscript parenthesis open
+	| '∑' 		(TBD)	// summation
+	| '⟩' 		(TBD)	// triangle bracket close
+	| '⟨' 		(TBD)	// triangle bracket open
+	| '⬜' 		(TBD)	// white large square

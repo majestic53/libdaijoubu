@@ -107,7 +107,6 @@ namespace DAIJOUBU {
 			)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
-
 			return !(*this == other);
 		}
 
