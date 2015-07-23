@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1530
+*Updated: 7/22/2015*
+
+* Added node class
+* Aligned lexer grammar with specification
+
 *Updated: 7/21/2015*
 
 * Added number token support

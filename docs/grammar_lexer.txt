@@ -45,9 +45,12 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| '⊘'		('@^')	// generic 4
 	| '⊜'		('@&')	// generic 5
 	| '⌾'		('@*')	// generic 6
+	| '⍒'		(TBD)	// grade down
+	| '⍋'		(TBD)	// grade up
 	| '>'			// greater than
 	| '≥'		('>=')	// greater than, equals
 	| '⍷'		('.=')	// index of
+	| '∩'		(TBD)	// intersection
 	| '<'			// less than
 	| '≤'		('<=')	// less than, equals
 	| 'log'			// logarithm
@@ -62,6 +65,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| 'ln'			// natural logarithm
 	| '≠'		('~=')	// not equals
 	| '☘'		('??')	// random
+	| '…'		('..')	// range
 	| 'sec'			// secant
 	| 'sin'			// sine
 	| '√'		('~^')	// square root
@@ -70,6 +74,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| '?'			// ternary conditional
 	| '¦'		('--')	// unary decrement
 	| '‡'		('++')	// unary increment
+	| '∪'		(TBD)	// union
 
 [X] subscript ::= [₀-₉]+
 
@@ -80,6 +85,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| ','			// argument delimiter
 	| '⇐'		('<-')	// assignment
 	| '⇔'		('<->')	// assignment swap
+	| '∅'		(TBD)	// empty set
 	| '}'			// block bracket close
 	| '{'			// block bracket open
 	| '|'			// context separator
@@ -92,3 +98,39 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 	| ':'			// ternary delimiter
 
 [X] type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'
+
+unused ::= 
+	| '∠' 			// angle
+	| '≈' 			// approximately equal
+	| '⬛' 			// black large square
+	| '∘' 			// circle operator
+	| '⁄' 			// combining solidus
+	| '†' 			// dagger
+	| '°' 			// degree
+	| '‖' 			// double vertical bar
+	| '♫'			// eighths note
+	| '—' 			// em dash
+	| '≡' 			// equivalent
+	| '█' 			// full block
+	| '»' 			// guillemet close
+	| '«' 			// guillemet open
+	| '⌂' 			// house
+	| '☞' 			// index
+	| '∞' 			// infinity
+	| '∫' 			// integral
+	| '‽' 			// interrobang
+	| '⸮' 			// irony
+	| '◊' 			// lozenge
+	| '∇'			// nabla
+	| '∂'			// partial derivative
+	| '¶' 			// pilcrow
+	| '±' 			// plus-minus
+	| '∝' 			// proportionality
+	| '§' 			// section
+	| '★' 			// star
+	| '₎'			// subscript parenthesis close
+	| '₍'			// subscript parenthesis open
+	| '∑' 			// summation
+	| '⟩' 			// triangle bracket close
+	| '⟨' 			// triangle bracket open
+	| '⬜' 			// white large square

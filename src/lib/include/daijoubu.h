@@ -38,6 +38,7 @@ using namespace DAIJOUBU;
 
 #include "daijoubu_unicode.h"
 #include "daijoubu_uid.h"
+#include "daijoubu_node.h"
 #include "daijoubu_token.h"
 
 using namespace DAIJOUBU::COMPONENT;

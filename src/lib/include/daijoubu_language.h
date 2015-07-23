@@ -187,11 +187,14 @@ namespace DAIJOUBU {
 		DAIJOUBU_OPERATOR_GENERIC_5_SIMPLE,
 		DAIJOUBU_OPERATOR_GENERIC_6,
 		DAIJOUBU_OPERATOR_GENERIC_6_SIMPLE,
+		DAIJOUBU_OPERATOR_GRADE_DOWN,
+		DAIJOUBU_OPERATOR_GRADE_UP,
 		DAIJOUBU_OPERATOR_GREATER_THAN,
 		DAIJOUBU_OPERATOR_GREATER_THAN_EQUALS,
 		DAIJOUBU_OPERATOR_GREATER_THAN_EQUALS_SIMPLE,
 		DAIJOUBU_OPERATOR_INDEX_OF,
 		DAIJOUBU_OPERATOR_INDEX_OF_SIMPLE,
+		DAIJOUBU_OPERATOR_INTERSECTION,
 		DAIJOUBU_OPERATOR_LESS_THAN,
 		DAIJOUBU_OPERATOR_LESS_THAN_EQUALS,
 		DAIJOUBU_OPERATOR_LESS_THAN_EQUALS_SIMPLE,
@@ -216,6 +219,8 @@ namespace DAIJOUBU {
 		DAIJOUBU_OPERATOR_NOT_EQUALS_SIMPLE,
 		DAIJOUBU_OPERATOR_RANDOM,
 		DAIJOUBU_OPERATOR_RANDOM_SIMPLE,
+		DAIJOUBU_OPERATOR_RANGE,
+		DAIJOUBU_OPERATOR_RANGE_SIMPLE,
 		DAIJOUBU_OPERATOR_SECANT,
 		DAIJOUBU_OPERATOR_SINE,
 		DAIJOUBU_OPERATOR_SQUARE_ROOT,
@@ -228,21 +233,23 @@ namespace DAIJOUBU {
 		DAIJOUBU_OPERATOR_UNARY_DECREMENT_SIMPLE,
 		DAIJOUBU_OPERATOR_UNARY_INCREMENT,
 		DAIJOUBU_OPERATOR_UNARY_INCREMENT_SIMPLE,
+		DAIJOUBU_OPERATOR_UNION,
 	};
 
-	#define DAIJOUBU_OPERATOR_MAX DAIJOUBU_OPERATOR_UNARY_INCREMENT_SIMPLE
+	#define DAIJOUBU_OPERATOR_MAX DAIJOUBU_OPERATOR_UNION
 
 	static const std::wstring DAIJOUBU_OPERATOR_STR[] = {
 		L"+", L"arccsc", L"arccos", L"arccot", L"arcsec", L"arcsin", L"arctan", L"#", 
 		L"⊤", L"+%", L"✓", L"?:", L"csc", L"cos", L"↔", L"<_>", L"/", 
 		L"=", L"^", L"!", L"⊥", L"-%", L"⊙", L"@!", L"⊕", 
 		L"@@", L"⊖", L"@$", L"⊗", L"@%", L"⊘", L"@^", L"⊜", 
-		L"@&", L"⌾", L"@*", L">", L"≥", L">=", L"⍷", L".=", 
-		L"<", L"≤", L"<=", L"log", L"∧", L"&&", L"¬", L"~", 
-		L"∨", L"||", L"⊻", L"><", L"↦", L"_>", L"∈", L"?=", 
-		L"%", L"⋅", L"*", L"ln", L"≠", L"~=", L"☘", L"??", 
-		L"sec", L"sin", L"√", L"~^", L"−", L"-", L"tan", L"?", 
-		L"¦", L"--", L"‡", L"++", 
+		L"@&", L"⌾", L"@*", L"⍒", L"⍋", L">", L"≥", L">=", 
+		L"⍷", L".=", L"∩", L"<", L"≤", L"<=", L"log", L"∧", 
+		L"&&", L"¬", L"~", L"∨", L"||", L"⊻", L"><", L"↦", 
+		L"_>", L"∈", L"?=", L"%", L"⋅", L"*", L"ln", L"≠", 
+		L"~=", L"☘", L"??", L"…", L"..", L"sec", L"sin", L"√", 
+		L"~^", L"−", L"-", L"tan", L"?", L"¦", L"--", L"‡", 
+		L"++", L"∪",
 		};
 
 	static const std::set<std::wstring> DAIJOUBU_OPERATOR_SET(
@@ -271,6 +278,7 @@ namespace DAIJOUBU {
 		DAIJOUBU_SYMBOL_ASSIGNMENT_SIMPLE,
 		DAIJOUBU_SYMBOL_ASSIGNMENT_SWAP,
 		DAIJOUBU_SYMBOL_ASSIGNMENT_SWAP_SIMPLE,
+		DAIJOUBU_SYMBOL_EMPTY_SET,
 		DAIJOUBU_SYMBOL_BLOCK_BRACKET_CLOSE,
 		DAIJOUBU_SYMBOL_BLOCK_BRACKET_OPEN,
 		DAIJOUBU_SYMBOL_CONTEXT_SEPERATOR,
@@ -287,9 +295,9 @@ namespace DAIJOUBU {
 	#define DAIJOUBU_SYMBOL_MAX DAIJOUBU_SYMBOL_TERNARY_DELIMITER
 
 	static const std::wstring DAIJOUBU_SYMBOL_STR[] = {
-		L"]", L"[", L",", L"⇐", L"<-", L"⇔", L"<->", L"}", 
-		L"{", L"|", L"\'", L")", L"(", L".", L"*", L"&", 
-		L";", L":", 
+		L"]", L"[", L",", L"⇐", L"<-", L"⇔", L"<->", L"∅", 
+		L"}", L"{", L"|", L"\'", L")", L"(", L".", L"*", 
+		L"&", L";", L":", 
 		};
 
 	static const std::set<std::wstring> DAIJOUBU_SYMBOL_SET(
