@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1530
+*Updated: 7/23/2015*
+
+* Added node factory class
+
 *Updated: 7/22/2015*
 
 * Added node class

@@ -20,6 +20,7 @@
 #ifndef DAIJOUBU_NODE_H_
 #define DAIJOUBU_NODE_H_
 
+#include <map>
 #include <vector>
 
 namespace DAIJOUBU {
@@ -110,7 +111,84 @@ namespace DAIJOUBU {
 
 		} daijoubu_node, *daijoubu_node_ptr;
 
-		// TODO: implement node factory
+		typedef class _daijoubu_node_factory {
+
+			public:
+
+				~_daijoubu_node_factory(void);
+
+				static _daijoubu_node_factory *acquire(void);
+
+				daijoubu_node &at(
+					__in daijoubu_uid uid
+					);
+
+				bool contains(
+					__in daijoubu_uid uid
+					);
+
+				size_t decrement_reference(
+					__in daijoubu_uid uid
+					);
+
+				daijoubu_uid generate(
+					__in daijoubu_uid tok_uid,
+					__in_opt size_t parent = INVALID_NODE_PARENT
+					);
+
+				size_t increment_reference(
+					__in daijoubu_uid uid
+					);
+
+				void initialize(void);
+
+				static bool is_allocated(void);
+
+				bool is_initialized(void);
+
+				size_t reference_count(
+					__in daijoubu_uid uid
+					);
+
+				size_t size(void);
+
+				std::wstring to_string(
+					__in_opt bool verbose = false
+					);
+
+				void uninitialize(void);
+
+			protected:
+
+				_daijoubu_node_factory(void);
+
+				_daijoubu_node_factory(
+					__in const _daijoubu_node_factory &other
+					);
+
+				_daijoubu_node_factory &operator=(
+					__in const _daijoubu_node_factory &other
+					);
+
+				static void _delete(void);
+
+				void clear(void);
+
+				std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>>::iterator find(
+					__in daijoubu_uid uid
+					);
+
+				bool m_initialized;
+
+				static _daijoubu_node_factory *m_instance;
+
+				std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>> m_node_map;
+
+			private:
+
+				std::recursive_mutex m_lock;
+
+		} daijoubu_node_factory, *daijoubu_node_factory_ptr;
 	}
 }
 

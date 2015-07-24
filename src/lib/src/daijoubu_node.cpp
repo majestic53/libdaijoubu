@@ -264,5 +264,255 @@ namespace DAIJOUBU {
 			SERIALIZE_CALL_RECUR(m_lock);
 			return node_as_string(*this, verbose);
 		}
+
+		daijoubu_node_factory_ptr daijoubu_node_factory::m_instance = NULL;
+
+		_daijoubu_node_factory::_daijoubu_node_factory(void) :
+			m_initialized(false)
+		{
+			std::atexit(daijoubu_node_factory::_delete);
+		}
+
+		_daijoubu_node_factory::~_daijoubu_node_factory(void)
+		{
+
+			if(m_initialized) {
+				uninitialize();
+			}
+		}
+
+		daijoubu_node_factory_ptr 
+		_daijoubu_node_factory::acquire(void)
+		{
+
+			if(!daijoubu_node_factory::m_instance) {
+
+				daijoubu_node_factory::m_instance = new daijoubu_node_factory;
+				if(!daijoubu_node_factory::m_instance) {
+					THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_ALLOCATION);
+				}
+			}
+
+			return daijoubu_node_factory::m_instance;
+		}
+
+		void 
+		_daijoubu_node_factory::_delete(void)
+		{
+
+			if(daijoubu_node_factory::m_instance) {
+				delete daijoubu_node_factory::m_instance;
+				daijoubu_node_factory::m_instance = NULL;
+			}
+		}
+
+		daijoubu_node &
+		_daijoubu_node_factory::at(
+			__in daijoubu_uid uid
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			return find(uid)->second.first;
+		}
+
+		void 
+		_daijoubu_node_factory::clear(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			m_node_map.clear();
+		}
+
+		bool 
+		_daijoubu_node_factory::contains(
+			__in daijoubu_uid uid
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			return (m_node_map.find(uid) != m_node_map.end());
+		}
+
+		size_t 
+		_daijoubu_node_factory::decrement_reference(
+			__in daijoubu_uid uid
+			)
+		{
+			size_t result;
+			std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>>::iterator iter;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			iter = find(uid);
+
+			result = --iter->second.second;
+			if(!result) {
+				m_node_map.erase(iter);
+			}
+
+			return result;
+		}
+
+		std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>>::iterator 
+		_daijoubu_node_factory::find(
+			__in daijoubu_uid uid
+			)
+		{
+			std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>>::iterator result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			result = m_node_map.find(uid);
+			if(result == m_node_map.end()) {
+				THROW_DAIJOUBU_NODE_EXCEPTION_MESSAGE(DAIJOUBU_NODE_EXCEPTION_NOT_FOUND,
+					L"0x%x", uid);
+			}
+
+			return result;
+		}
+
+		daijoubu_uid 
+		_daijoubu_node_factory::generate(
+			__in daijoubu_uid tok_uid,
+			__in_opt size_t parent
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			daijoubu_node node(tok_uid, parent);
+			m_node_map.insert(std::pair<daijoubu_uid, std::pair<daijoubu_node, size_t>>(node.uid(),
+				std::pair<daijoubu_node, size_t>(node, REFERENCE_INIT)));
+
+			return node.uid();
+		}
+
+		size_t 
+		_daijoubu_node_factory::increment_reference(
+			__in daijoubu_uid uid
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			return find(uid)->second.second;
+		}
+
+		void 
+		_daijoubu_node_factory::initialize(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_INITIALIZED);
+			}
+
+			clear();
+			m_initialized = true;
+		}
+
+		bool 
+		_daijoubu_node_factory::is_allocated(void)
+		{
+			return (daijoubu_node_factory::m_instance != NULL);
+		}
+
+		bool 
+		_daijoubu_node_factory::is_initialized(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_initialized;
+		}
+
+		size_t 
+		_daijoubu_node_factory::reference_count(
+			__in daijoubu_uid uid
+			)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			return find(uid)->second.second;
+		}
+
+		size_t 
+		_daijoubu_node_factory::size(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			return m_node_map.size();
+		}
+
+		std::wstring 
+		_daijoubu_node_factory::to_string(
+			__in_opt bool verbose
+			)
+		{
+			std::wstringstream result;
+			std::map<daijoubu_uid, std::pair<daijoubu_node, size_t>>::iterator iter;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			result << DAIJOUBU_NODE_HEADER << L" [" << (m_initialized ? L"INITIALIZED" : L"UNINITIALIZED")
+				<< L"] (" << VALUE_AS_HEX(uintptr_t, this) << L"), COUNT: " << m_node_map.size();
+
+			if(verbose) {
+
+				for(iter = m_node_map.begin(); iter != m_node_map.end(); ++iter) {
+					result << std::endl << L"{" << VALUE_AS_HEX(daijoubu_uid, iter->first) 
+						<< L"}, REFERENCES: " << iter->second.second << L", "
+						<< iter->second.first.to_string(true);
+				}	
+			}
+
+			return CHECK_STRING(result.str());
+		}
+
+		void 
+		_daijoubu_node_factory::uninitialize(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_UNINITIALIZED);
+			}
+
+			clear();
+			m_initialized = false;
+		}
 	}
 }
