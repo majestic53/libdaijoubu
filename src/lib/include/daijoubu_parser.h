@@ -89,11 +89,23 @@ namespace DAIJOUBU {
 
 			protected:
 
-				daijoubu_uid node_add(
-					__in daijoubu_uid root_uid
+				static daijoubu_node &node_at_uid(
+					__in daijoubu_uid uid
 					);
 
 				static daijoubu_node_factory_ptr node_factory(void);
+
+				daijoubu_statement &statement_add(
+					__in daijoubu_uid root_uid
+					);
+
+				static void statement_as_string_nested(
+					__out std::wstringstream &stream,
+					__in const daijoubu_statement &statement,
+					__in size_t position,
+					__in size_t tab,
+					__in_opt bool verbose = false
+					);
 
 				daijoubu_statement &statement_at(
 					__in size_t position

@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1531
+*Updated: 7/29/2015*
+
+* Added parser class routines (incomplete)
+* Added component tests
+
 *Updated: 7/28/2015*
 
 * Added parser class routines (incomplete)

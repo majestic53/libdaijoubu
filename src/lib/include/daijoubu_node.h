@@ -27,6 +27,11 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
+		enum {
+			DAIJOUBU_LEAF_NODE = 1,
+			DAIJOUBU_ROOT_NODE,
+		};
+
 		#define INVALID_NODE_PARENT INVALID_TYPE(size_t)
 
 		typedef class _daijoubu_node :
@@ -57,7 +62,7 @@ namespace DAIJOUBU {
 					__in const _daijoubu_node &other
 					);
 
-				size_t &child(
+				size_t &child_at(
 					__in size_t position
 					);
 

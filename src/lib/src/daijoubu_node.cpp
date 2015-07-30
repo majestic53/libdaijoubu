@@ -24,11 +24,6 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
-		enum {
-			DAIJOUBU_LEAF_NODE = 1,
-			DAIJOUBU_ROOT_NODE,
-		};
-
 		_daijoubu_node::_daijoubu_node(
 			__in daijoubu_uid tok_uid,
 			__in_opt size_t parent
@@ -135,7 +130,7 @@ namespace DAIJOUBU {
 		}
 
 		size_t &
-		_daijoubu_node::child(
+		_daijoubu_node::child_at(
 			__in size_t position
 			)
 		{

@@ -17,47 +17,112 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <fstream>
 #include <locale>
 #include "../lib/include/daijoubu.h"
 
+#define DAIJOUBU_TEST
+#ifdef DAIJOUBU_TEST
+
+enum {
+	DAIJOUBU_TEST_ARG_CALL = 0,
+	DAIJOUBU_TEST_ARG_PATH,
+};
+
+#define DAIJOUBU_TEST_ARG_MAX DAIJOUBU_TEST_ARG_PATH
+#define DAIJOUBU_TEST_ARG_COUNT (DAIJOUBU_TEST_ARG_MAX + 1)
+#define DAIJOUBU_TEST_LEXER_BASE
+//#define DAIJOUBU_TEST_LEXER
+//#define DAIJOUBU_TEST_PARSER
+#endif // DAIJOUBU_TEST
+
 int 
-main(void) 
+main(
+	__in int count,
+	__in const char **arguments
+	) 
 {
 	uint32_t id;
 	int result = 0;
-	std::wstring message;
-	daijoubu_region_t region;
 	daijoubu_ptr inst = NULL;
+	daijoubu_region_t region;
+	std::wstring input, message;
 
 	std::setlocale(LC_CTYPE, std::string().c_str());
 
 	try {
 
 		std::wcout << L"libdaijoubu " << daijoubu::version() << std::endl
-			<< L"Copyright (C) 2015 David Jolly" << std::endl;
+			<< L"Copyright (C) 2015 David Jolly" << std::endl << std::endl;
 
 		inst = daijoubu::acquire();
 		inst->initialize();
 		//std::wcout << inst->to_string(true) << std::endl;
 
+#ifdef DAIJOUBU_TEST
+
+		input = L"";
+
+#ifdef DAIJOUBU_TEST_LEXER_BASE
+		daijoubu_lexer_base comp(input);
+		std::wcout << L"Size: " << comp.size() << std::endl;
+
+		while(comp.has_next_character()) {
+			std::wcout << comp.to_string(true) << std::endl;
+			comp.move_next_character();
+		}
+
+		std::wcout << comp.to_string(true) << std::endl;
+
+		while(comp.has_previous_character()) {
+			comp.move_previous_character();
+			std::wcout << comp.to_string(true) << std::endl;
+		}
+#endif // DAIJOUBU_TEST_LEXER_BASE
+
+#ifdef DAIJOUBU_TEST_LEXER
+		daijoubu_lexer comp(input);
+
+		comp.discover();
+		std::wcout << L"Size: " << comp.size() << std::endl;
+
+		while(comp.has_next_token()) {
+			std::wcout << comp.to_string(true) << std::endl;
+			comp.move_next_token();
+		}
+
+		std::wcout << comp.to_string(true) << std::endl;
+
+		while(comp.has_previous_token()) {
+			comp.move_previous_token();
+			std::wcout << comp.to_string(true) << std::endl;
+		}
+#endif // DAIJOUBU_TEST_LEXER
+
+#ifdef DAIJOUBU_TEST_PARSER
+		daijoubu_parser comp(input);
+
+		comp.discover();
+		std::wcout << L"Size: " << comp.size() << std::endl;
+
+		while(comp.has_next_statement()) {
+			std::wcout << comp.to_string(true) << std::endl;
+			comp.move_next_statement();
+		}
+
+		std::wcout << comp.to_string(true) << std::endl;
+
+		while(comp.has_previous_statement()) {
+			comp.move_previous_statement();
+			std::wcout << comp.to_string(true) << std::endl;
+		}
+#endif // DAIJOUBU_TEST_PARSER
+
+#else
+
 		// TODO
 
-		daijoubu_lexer lex(L"");
-		lex.discover();
-
-		std::wcout << L"Size: " << lex.size() << std::endl;
-
-		while(lex.has_next_token()) {
-			std::wcout << lex.to_string(true) << std::endl;
-			lex.move_next_token();
-		}
-
-		std::wcout << lex.to_string(true) << std::endl;
-
-		while(lex.has_previous_token()) {
-			lex.move_previous_token();
-			std::wcout << lex.to_string(true) << std::endl;
-		}
+#endif // DAIJOUBU_TEST
 
 		inst->uninitialize();
 		//std::wcout << inst->to_string(true) << std::endl;

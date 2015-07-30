@@ -112,7 +112,20 @@ namespace DAIJOUBU {
 					L"Statement position: %llu", m_stmt_position);
 			}
 
-			// TODO
+			if(token().type() == DAIJOUBU_TOKEN_BEGIN) {
+				move_next_token();
+			}
+
+			if(has_next_token()
+					&& (m_stmt_position == daijoubu_parser::size())) {
+
+				// TODO: enumerate statement
+				daijoubu_statement stmt;
+				stmt.push_back(node_factory()->generate(token().uid()));
+				statement_insert(stmt);
+				move_next_token();
+				// ---
+			}
 
 			++m_stmt_position;
 
@@ -132,20 +145,12 @@ namespace DAIJOUBU {
 			return statement_at(--m_stmt_position);
 		}
 
-		daijoubu_uid 
-		_daijoubu_parser::node_add(
-			__in daijoubu_uid root_uid
+		daijoubu_node &
+		_daijoubu_parser::node_at_uid(
+			__in daijoubu_uid uid
 			)
 		{
-			daijoubu_uid result;
-
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO
-			result = 0;
-			// ---
-
-			return result;
+			return node_factory()->at(uid);
 		}
 
 		daijoubu_node_factory_ptr 
@@ -171,8 +176,8 @@ namespace DAIJOUBU {
 
 			daijoubu_parser::clear();
 			daijoubu_lexer::set(input, simple);
-			node_add(token_begin());
-			node_add(token_end());
+			statement_add(token_begin());
+			statement_add(token_end());
 		}
 
 		size_t 
@@ -197,6 +202,21 @@ namespace DAIJOUBU {
 			return statement_at(m_stmt_position);
 		}
 
+		daijoubu_statement & 
+		_daijoubu_parser::statement_add(
+			__in daijoubu_uid root_uid
+			)
+		{
+			daijoubu_statement stmt;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			stmt.push_back(node_factory()->generate(root_uid));
+			m_stmt_list.push_back(stmt);
+
+			return m_stmt_list.back();
+		}
+
 		std::wstring 
 		_daijoubu_parser::statement_as_string(
 			__in const daijoubu_statement &statement,
@@ -205,9 +225,71 @@ namespace DAIJOUBU {
 		{
 			std::wstringstream result;
 
-			// TODO
+			statement_as_string_nested(result, statement, 0, 0, verbose);
 
 			return CHECK_STRING(result.str());
+		}
+
+		void 
+		_daijoubu_parser::statement_as_string_nested(
+			__out std::wstringstream &stream,
+			__in const daijoubu_statement &statement,
+			__in size_t position,
+			__in size_t tab,
+			__in_opt bool verbose
+			)
+		{
+			uint8_t flag = 0;
+			size_t child_iter = 0, tab_iter = 0;
+
+			if(position >= statement.size()) {
+				THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(DAIJOUBU_PARSER_EXCEPTION_INVALID_POSITION,
+					L"Statement position: %llu", position);
+			}
+
+			for(; tab_iter < tab; ++tab_iter) {
+				stream << L"---";
+			}
+
+			daijoubu_node &node = node_at_uid(statement.at(position));
+			daijoubu_token &tok = token_at_uid(node.uid());
+			stream << tok.to_string(verbose);
+
+			if(verbose
+					&& (tok.type() != DAIJOUBU_TOKEN_BEGIN)
+					&& (tok.type() != DAIJOUBU_TOKEN_END)) {
+				stream << L" [" << node.size() << L"]";
+
+				if(node.is_leaf()) {
+					flag |= DAIJOUBU_LEAF_NODE;
+				}
+
+				if(node.is_root()) {
+					flag |= DAIJOUBU_ROOT_NODE;
+				}
+
+				if(flag) {
+					stream << L" (";
+
+					if(flag & DAIJOUBU_ROOT_NODE) {
+						stream << L"ROOT";
+
+						if(flag & DAIJOUBU_LEAF_NODE) {
+							stream << L", LEAF";
+						}
+					} else if(flag & DAIJOUBU_LEAF_NODE) {
+						stream << L"LEAF";
+					}
+
+					stream << L")";
+				}
+			}
+
+			for(; child_iter < node.size(); ++child_iter) {
+				stream << std::endl;
+				statement_as_string_nested(stream, statement, node.child_at(child_iter), 
+					tab + 1, verbose);
+			}
 		}
 
 		daijoubu_statement &
@@ -245,13 +327,8 @@ namespace DAIJOUBU {
 			__in_opt bool verbose
 			)
 		{
-			std::wstringstream result;
-
 			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO
-
-			return CHECK_STRING(result.str());
+			return token_exception(tab, verbose);
 		}
 
 		void 
@@ -323,7 +400,7 @@ namespace DAIJOUBU {
 
 			if(verbose) {
 				result << L"(" << m_stmt_position << L"/" << (m_stmt_list.size() - 1) 
-					<< L")";
+					<< L") ";
 			}
 
 			result << statement_as_string(statement(), verbose);
