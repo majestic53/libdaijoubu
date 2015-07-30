@@ -270,7 +270,9 @@ namespace DAIJOUBU {
 		}
 
 		wchar_t 
-		_daijoubu_lexer_base::move_next_character(void)
+		_daijoubu_lexer_base::move_next_character(
+			__in_opt bool simple
+			)
 		{
 			size_t position;
 			std::wstring line;
@@ -284,7 +286,7 @@ namespace DAIJOUBU {
 			}
 
 			result = character();
-			if(m_simple && (result > UINT8_MAX)) {
+			if(m_simple && !simple && (result > UINT8_MAX)) {
 				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(DAIJOUBU_LEXER_EXCEPTION_INVALID_DIALECT,
 					L"\'%lc\' (0x%x)", (std::iswprint(result) ? result : L' '), result);
 			}
@@ -850,8 +852,7 @@ namespace DAIJOUBU {
 			daijoubu_token &tok = token_at(m_tok_position + 1);
 			tok.subtype() = subtype;
 
-			if((type != DAIJOUBU_TOKEN_IDENTIFIER)
-					&& (subtype == INVALID_TOKEN_SUBTYPE)) {
+			if(subtype == INVALID_TOKEN_SUBTYPE) {
 				tok.text() = text;
 			}
 		}
@@ -1002,7 +1003,7 @@ namespace DAIJOUBU {
 
 			while(has_next_character() && !terminated) {
 				text += character();
-				move_next_character();
+				move_next_character(true);
 
 				switch(is_string_delimiter()) {
 					case DAIJOUBU_STRING_OPEN_SIMPLE_TYPE:
@@ -1099,28 +1100,54 @@ namespace DAIJOUBU {
 		_daijoubu_lexer::enumerate_symbol(void)
 		{
 			std::wstring text;
-			daijoubu_token_t type = DAIJOUBU_TOKEN_SYMBOL;
+			daijoubu_token_t type;
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			do {
-				text += character();
+			if(!m_simple) {
+				type = DAIJOUBU_TOKEN_SYMBOL;
 
-				if(!has_next_character()) {
-					break;
+				do {
+					text += character();
+
+					if(!has_next_character()) {
+						break;
+					}
+
+					move_next_character();
+				} while(IS_DAIJOUBU_OPERATOR_TYPE(text + character())
+						|| IS_DAIJOUBU_SYMBOL_TYPE(text + character())
+						|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));
+
+				if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
+					type = DAIJOUBU_TOKEN_OPERATOR;
+				} else if(!IS_DAIJOUBU_SYMBOL_TYPE(text)) {
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
 				}
+			} else {
+				type = DAIJOUBU_TOKEN_SYMBOL_SIMPLE;
 
-				move_next_character();
-			} while(IS_DAIJOUBU_OPERATOR_TYPE(text + character())
-					|| IS_DAIJOUBU_SYMBOL_TYPE(text + character())
-					|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));
+				do {
+					text += character();
 
-			if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
-				type = DAIJOUBU_TOKEN_OPERATOR;
-			} else if(!IS_DAIJOUBU_SYMBOL_TYPE(text)) {
-				THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
-					DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_SYMBOL,
-					L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+					if(!has_next_character()) {
+						break;
+					}
+
+					move_next_character();
+				} while(IS_DAIJOUBU_OPERATOR_SIMPLE_TYPE(text + character())
+						|| IS_DAIJOUBU_SYMBOL_SIMPLE_TYPE(text + character())
+						|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));
+
+				if(IS_DAIJOUBU_OPERATOR_SIMPLE_TYPE(text)) {
+					type = DAIJOUBU_TOKEN_OPERATOR_SIMPLE;
+				} else if(!IS_DAIJOUBU_SYMBOL_SIMPLE_TYPE(text)) {
+					THROW_DAIJOUBU_LEXER_EXCEPTION_MESSAGE(
+						DAIJOUBU_LEXER_EXCEPTION_UNSUPPORTED_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(character_exception(1, true)));
+				}
 			}
 
 			token_insert(token_add(type));
@@ -1376,7 +1403,7 @@ namespace DAIJOUBU {
 
 			++m_tok_position;
 
-			return token_at(m_tok_position);
+			return token();
 		}
 
 		daijoubu_token &
@@ -1411,6 +1438,21 @@ namespace DAIJOUBU {
 			daijoubu_lexer_base::set(input, simple);
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_BEGIN));
 			m_tok_list.push_back(token_add(DAIJOUBU_TOKEN_END));
+		}
+
+		size_t 
+		_daijoubu_lexer::size(void)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			result = m_tok_list.size();
+			if(result >= LEXER_SENTINEL_COUNT) {
+				result -= LEXER_SENTINEL_COUNT;
+			}
+
+			return result;
 		}
 
 		void 
@@ -1536,13 +1578,6 @@ namespace DAIJOUBU {
 			}
 		}
 
-		size_t 
-		_daijoubu_lexer::size(void)
-		{
-			SERIALIZE_CALL_RECUR(m_lock);
-			return (m_tok_list.size() - LEXER_SENTINEL_COUNT);
-		}
-
 		std::wstring 
 		_daijoubu_lexer::to_string(
 			__in_opt bool verbose
@@ -1598,7 +1633,7 @@ namespace DAIJOUBU {
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			fact = daijoubu::acquire()->acquire_token_factory();
+			fact = token_factory();
 			result = fact->generate(type, subtype);
 			daijoubu_token &tok = fact->at(result);
 			tok.text() = text;
@@ -1633,8 +1668,27 @@ namespace DAIJOUBU {
 					L"Token position: %llu", position);
 			}
 
-			return daijoubu::acquire()->acquire_token_factory()->at(
-				m_tok_list.at(position));
+			return token_factory()->at(m_tok_list.at(position));
+		}
+
+		daijoubu_uid &
+		_daijoubu_lexer::token_begin(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_tok_list.front();
+		}
+
+		daijoubu_uid &
+		_daijoubu_lexer::token_end(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_tok_list.back();
+		}
+
+		daijoubu_token_factory_ptr 
+		_daijoubu_lexer::token_factory(void)
+		{
+			return daijoubu::acquire()->acquire_token_factory();
 		}
 
 		void 
@@ -1642,7 +1696,15 @@ namespace DAIJOUBU {
 			__in daijoubu_uid uid
 			)
 		{
+			daijoubu_token_factory_ptr fact = NULL;
+
 			SERIALIZE_CALL_RECUR(m_lock);
+
+			fact = token_factory();
+			if(fact->contains(uid)) {
+				fact->increment_reference(uid);
+			}
+
 			m_tok_list.insert(m_tok_list.begin() + m_tok_position + 1, uid);
 		}
 
@@ -1709,6 +1771,9 @@ namespace DAIJOUBU {
 			__in size_t position
 			)
 		{
+			daijoubu_uid uid;
+			daijoubu_token_factory_ptr fact = NULL;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			if(position >= m_tok_list.size()) {
@@ -1716,8 +1781,13 @@ namespace DAIJOUBU {
 					L"Token position: %llu", position);
 			}
 
-			daijoubu::acquire()->acquire_token_factory()->decrement_reference(
-				m_tok_list.at(position));
+			uid = m_tok_list.at(position);
+
+			fact = token_factory();
+			if(fact->contains(uid)) {
+				fact->decrement_reference(uid);
+			}
+
 			m_tok_list.erase(m_tok_list.begin() + position);
 
 			if(m_tok_position >= position) {

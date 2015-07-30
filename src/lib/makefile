@@ -28,11 +28,11 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)daijoubu.o $(DIR_BUILD)daijoubu_exception.o $(DIR_BUILD)daijoubu_language.o $(DIR_BUILD)daijoubu_lexer.o $(DIR_BUILD)daijoubu_node.o $(DIR_BUILD)daijoubu_token.o $(DIR_BUILD)daijoubu_uid.o $(DIR_BUILD)daijoubu_unicode.o
+	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)daijoubu.o $(DIR_BUILD)daijoubu_exception.o $(DIR_BUILD)daijoubu_language.o $(DIR_BUILD)daijoubu_lexer.o $(DIR_BUILD)daijoubu_parser.o $(DIR_BUILD)daijoubu_node.o $(DIR_BUILD)daijoubu_token.o $(DIR_BUILD)daijoubu_uid.o $(DIR_BUILD)daijoubu_unicode.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
-build: daijoubu.o daijoubu_exception.o daijoubu_language.o daijoubu_lexer.o daijoubu_node.o daijoubu_token.o daijoubu_uid.o daijoubu_unicode.o
+build: daijoubu.o daijoubu_exception.o daijoubu_language.o daijoubu_lexer.o daijoubu_parser.o daijoubu_node.o daijoubu_token.o daijoubu_uid.o daijoubu_unicode.o
 
 daijoubu.o: $(DIR_SRC)daijoubu.cpp $(DIR_INC)daijoubu.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu.cpp -o $(DIR_BUILD)daijoubu.o
@@ -61,3 +61,6 @@ daijoubu_language.o: $(DIR_SRC)daijoubu_language.cpp $(DIR_INC)daijoubu_language
 
 daijoubu_lexer.o: $(DIR_SRC)daijoubu_lexer.cpp $(DIR_INC)daijoubu_lexer.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu_lexer.cpp -o $(DIR_BUILD)daijoubu_lexer.o
+
+daijoubu_parser.o: $(DIR_SRC)daijoubu_parser.cpp $(DIR_INC)daijoubu_parser.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC)daijoubu_parser.cpp -o $(DIR_BUILD)daijoubu_parser.o

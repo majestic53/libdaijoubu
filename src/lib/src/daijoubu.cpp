@@ -27,6 +27,7 @@ namespace DAIJOUBU {
 	daijoubu_ptr daijoubu::m_instance = NULL;
 
 	_daijoubu::_daijoubu(void) :
+		m_factory_node(daijoubu_node_factory::acquire()),
 		m_factory_token(daijoubu_token_factory::acquire()),
 		m_factory_uid(daijoubu_uid_factory::acquire()),
 		m_unicode(daijoubu_unicode::acquire()),
@@ -66,6 +67,18 @@ namespace DAIJOUBU {
 		}
 
 		return daijoubu::m_instance;
+	}
+
+	daijoubu_node_factory_ptr 
+	_daijoubu::acquire_node_factory(void)
+	{
+		SERIALIZE_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_DAIJOUBU_EXCEPTION(DAIJOUBU_EXCEPTION_UNINITIALIZED);
+		}
+
+		return m_factory_node;
 	}
 
 	daijoubu_token_factory_ptr 
@@ -118,6 +131,7 @@ namespace DAIJOUBU {
 		m_unicode->initialize(UNICODE_RESOURCE_PATH);
 		m_factory_uid->initialize();
 		m_factory_token->initialize();
+		m_factory_node->initialize();
 
 		// TODO
 
@@ -149,7 +163,8 @@ namespace DAIJOUBU {
 			<< L"] (" << VALUE_AS_HEX(uintptr_t, this) << L")" 
 			<< std::endl << m_unicode->to_string(verbose) 
 			<< std::endl << m_factory_uid->to_string(verbose)
-			<< std::endl << m_factory_token->to_string(verbose);
+			<< std::endl << m_factory_token->to_string(verbose)
+			<< std::endl << m_factory_node->to_string(verbose);
 
 		return CHECK_STRING(result.str());
 	}
@@ -177,6 +192,7 @@ namespace DAIJOUBU {
 
 		// TODO
 
+		m_factory_node->uninitialize();
 		m_factory_token->uninitialize();
 		m_factory_uid->uninitialize();
 		m_unicode->uninitialize();

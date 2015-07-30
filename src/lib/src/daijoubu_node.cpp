@@ -36,7 +36,11 @@ namespace DAIJOUBU {
 				m_parent(parent),
 				m_token(tok_uid)
 		{
-			return;
+			daijoubu_token_factory_ptr fact = token_factory();
+
+			if(fact->contains(m_token)) {
+				fact->increment_reference(m_token);
+			}
 		}
 
 		_daijoubu_node::_daijoubu_node(
@@ -47,12 +51,20 @@ namespace DAIJOUBU {
 				m_parent(other.m_parent),
 				m_token(other.m_token)
 		{
-			return;
+			daijoubu_token_factory_ptr fact = token_factory();
+
+			if(fact->contains(m_token)) {
+				fact->increment_reference(m_token);
+			}
 		}
 
 		_daijoubu_node::~_daijoubu_node(void)
 		{
-			return;
+			daijoubu_token_factory_ptr fact = token_factory();
+
+			if(fact->contains(m_token)) {
+				fact->decrement_reference(m_token);
+			}
 		}
 
 		_daijoubu_node &
@@ -60,13 +72,25 @@ namespace DAIJOUBU {
 			__in const _daijoubu_node &other
 			)
 		{
+			daijoubu_token_factory_ptr fact = NULL;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			if(this != &other) {
+
+				fact = token_factory();
+				if(fact->contains(m_token)) {
+					fact->decrement_reference(m_token);
+				}
+
 				daijoubu_uid_class::operator=(other);
 				m_children = other.m_children;
 				m_parent = other.m_parent;
+
 				m_token = other.m_token;
+				if(fact->contains(m_token)) {
+					fact->increment_reference(m_token);
+				}
 			}
 
 			return *this;
@@ -249,7 +273,27 @@ namespace DAIJOUBU {
 			return m_children.size();
 		}
 
-		daijoubu_uid &
+		void 
+		_daijoubu_node::set_token(
+			__in daijoubu_uid uid
+			)
+		{
+			daijoubu_token_factory_ptr fact = NULL;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			fact = token_factory();
+			if(fact->contains(m_token)) {
+				fact->decrement_reference(m_token);
+			}
+
+			m_token = uid;
+			if(fact->contains(m_token)) {
+				fact->increment_reference(m_token);
+			}
+		}
+
+		daijoubu_uid 
 		_daijoubu_node::token(void)
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
@@ -263,6 +307,12 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return node_as_string(*this, verbose);
+		}
+
+		daijoubu_token_factory_ptr 
+		_daijoubu_node::token_factory(void)
+		{
+			return daijoubu::acquire()->acquire_token_factory();
 		}
 
 		daijoubu_node_factory_ptr daijoubu_node_factory::m_instance = NULL;
@@ -434,8 +484,8 @@ namespace DAIJOUBU {
 				THROW_DAIJOUBU_NODE_EXCEPTION(DAIJOUBU_NODE_EXCEPTION_INITIALIZED);
 			}
 
-			clear();
 			m_initialized = true;
+			clear();
 		}
 
 		bool 

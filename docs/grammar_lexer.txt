@@ -16,7 +16,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, l
 
 [X] literal_boolean ::= 'false' | 'true'
 
-[X] literal_numeric ::= ['−']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
+[X] literal_numeric ::= ['-']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
 
 [X] literal_string ::= '“'<UTF8_char>*'”'
 

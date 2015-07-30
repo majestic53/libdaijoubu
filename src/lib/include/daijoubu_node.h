@@ -87,7 +87,11 @@ namespace DAIJOUBU {
 
 				size_t size(void);
 
-				daijoubu_uid &token(void);
+				void set_token(
+					__in daijoubu_uid uid
+					);
+
+				daijoubu_uid token(void);
 
 				virtual std::wstring to_string(
 					__in_opt bool verbose = false
@@ -98,6 +102,8 @@ namespace DAIJOUBU {
 				std::vector<size_t>::iterator find(
 					__in size_t position
 					);
+
+				static daijoubu_token_factory_ptr token_factory(void);
 
 				std::vector<size_t> m_children;
 

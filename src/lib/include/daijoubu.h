@@ -38,8 +38,8 @@ using namespace DAIJOUBU;
 
 #include "daijoubu_unicode.h"
 #include "daijoubu_uid.h"
-#include "daijoubu_node.h"
 #include "daijoubu_token.h"
+#include "daijoubu_node.h"
 
 using namespace DAIJOUBU::COMPONENT;
 
@@ -48,6 +48,7 @@ using namespace DAIJOUBU::COMPONENT;
 #endif // LANGUAGE
 
 #include "daijoubu_lexer.h"
+#include "daijoubu_parser.h"
 
 using namespace DAIJOUBU::LANGUAGE;
 
@@ -60,6 +61,8 @@ namespace DAIJOUBU {
 			~_daijoubu(void);
 
 			static _daijoubu *acquire(void);
+
+			daijoubu_node_factory_ptr acquire_node_factory(void);
 
 			daijoubu_token_factory_ptr acquire_token_factory(void);
 
@@ -99,6 +102,8 @@ namespace DAIJOUBU {
 				);
 
 			static void _delete(void);
+
+			daijoubu_node_factory_ptr m_factory_node;
 
 			daijoubu_token_factory_ptr m_factory_token;
 

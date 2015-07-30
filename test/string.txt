@@ -2,6 +2,10 @@
 
 “This is a test_9876”
 
+“⇐√⊙”
+
 ## LITERAL STRING SIMPLE
 
 <<This is a test_0123>>
+
+<<⇐√⊙>>

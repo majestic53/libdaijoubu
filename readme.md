@@ -12,6 +12,16 @@ Table of Contents
 Changelog
 =========
 
+##Version 0.1.1531
+*Updated: 7/28/2015*
+
+* Added parser class routines (incomplete)
+
+*Updated: 7/27/2015*
+
+* Added parser class (incomplete)
+* Aligned with simple dialect
+
 ##Version 0.1.1530
 *Updated: 7/23/2015*
 
@@ -49,27 +59,6 @@ Changelog
 
 * Added token subtypes (incomplete)
 * Added support for simple dialect
-
-###Version 0.1.1528
-*Updated: 7/12/2015*
-
-* Added unicode support
-
-*Updated 7/10/2015*
-
-* Minor code cleanup
-
-*Updated: 7/9/2015*
-
-* Added lexer/lexer base classes
-
-*Updated: 7/8/2015*
-
-* Added uid/token factories
-
-*Updated: 7/7/2015*
-
-* Initial commit
 
 *Changelog truncated (see file history for full log)*
 

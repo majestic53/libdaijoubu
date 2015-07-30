@@ -101,7 +101,9 @@ namespace DAIJOUBU {
 
 				bool is_simple(void);
 
-				wchar_t move_next_character(void);
+				wchar_t move_next_character(
+					__in_opt bool simple = false
+					);
 
 				wchar_t move_previous_character(void);
 
@@ -287,6 +289,12 @@ namespace DAIJOUBU {
 				daijoubu_token &token_at(
 					__in size_t position
 					);
+
+				daijoubu_uid &token_begin(void);
+
+				daijoubu_uid &token_end(void);
+
+				static daijoubu_token_factory_ptr token_factory(void);
 
 				void token_insert(
 					__in daijoubu_uid uid
