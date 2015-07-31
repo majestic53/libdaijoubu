@@ -88,6 +88,110 @@ namespace DAIJOUBU {
 			daijoubu_parser::reset();
 		}
 
+		size_t 
+		_daijoubu_parser::enumerate_assignment(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_call_function(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_call_native(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			statement.push_back(node_factory()->generate(token().uid()));
+			move_next_token();
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_unary(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
 		bool 
 		_daijoubu_parser::has_next_statement(void)
 		{
@@ -105,6 +209,8 @@ namespace DAIJOUBU {
 		daijoubu_statement &
 		_daijoubu_parser::move_next_statement(void)
 		{
+			daijoubu_statement stmt;
+
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			if(!has_next_statement()) {
@@ -118,13 +224,8 @@ namespace DAIJOUBU {
 
 			if(has_next_token()
 					&& (m_stmt_position == daijoubu_parser::size())) {
-
-				// TODO: enumerate statement
-				daijoubu_statement stmt;
-				stmt.push_back(node_factory()->generate(token().uid()));
+				enumerate_statement(stmt, INVALID_NODE_PARENT);
 				statement_insert(stmt);
-				move_next_token();
-				// ---
 			}
 
 			++m_stmt_position;
@@ -217,6 +318,34 @@ namespace DAIJOUBU {
 			return m_stmt_list.back();
 		}
 
+		size_t 
+		_daijoubu_parser::statement_add_child(
+			__in daijoubu_statement &statement,
+			__in daijoubu_uid child_uid,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+			daijoubu_uid uid;
+
+			if(parent_position >= statement.size()) {
+				THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(DAIJOUBU_PARSER_EXCEPTION_INVALID_POSITION,
+					L"Parent statement position: %llu", parent_position);
+			}
+
+			result = statement.size();
+
+			if(parent_position != INVALID_NODE_PARENT) {
+				node_at_uid(statement.at(parent_position)).child_insert(result);
+			}
+
+			uid = node_factory()->generate(child_uid);
+			node_at_uid(uid).parent() = parent_position;
+			statement.push_back(uid);
+
+			return result;
+		}
+
 		std::wstring 
 		_daijoubu_parser::statement_as_string(
 			__in const daijoubu_statement &statement,
@@ -247,8 +376,12 @@ namespace DAIJOUBU {
 					L"Statement position: %llu", position);
 			}
 
-			for(; tab_iter < tab; ++tab_iter) {
-				stream << L"---";
+			if(verbose && tab) {
+				stream << L"      ";
+
+				for(; tab_iter < tab; ++tab_iter) {
+					stream << L"---";
+				}
 			}
 
 			daijoubu_node &node = node_at_uid(statement.at(position));

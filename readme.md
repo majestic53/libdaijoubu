@@ -13,6 +13,12 @@ Changelog
 =========
 
 ##Version 0.1.1531
+*Updated: 7/30/2015*
+
+* Added parser enumeration routines (incomplete)
+* Added statement helper routines
+* Minor code cleanup
+
 *Updated: 7/29/2015*
 
 * Added parser class routines (incomplete)

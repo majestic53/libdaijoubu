@@ -89,6 +89,36 @@ namespace DAIJOUBU {
 
 			protected:
 
+				size_t enumerate_assignment(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_call_function(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_call_native(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_unary(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
 				static daijoubu_node &node_at_uid(
 					__in daijoubu_uid uid
 					);
@@ -97,6 +127,12 @@ namespace DAIJOUBU {
 
 				daijoubu_statement &statement_add(
 					__in daijoubu_uid root_uid
+					);
+
+				static size_t statement_add_child(
+					__in daijoubu_statement &statement,
+					__in daijoubu_uid child_uid,
+					__in size_t parent_position
 					);
 
 				static void statement_as_string_nested(
