@@ -155,22 +155,22 @@ namespace DAIJOUBU {
 					__in size_t parent_position
 					);
 
-				size_t enumerate_statement_call_function(
-					__inout daijoubu_statement &statement,
-					__in size_t parent_position
-					);
-
-				size_t enumerate_statement_call_native(
-					__inout daijoubu_statement &statement,
-					__in size_t parent_position
-					);
-
 				size_t enumerate_statement_control(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
 
-				size_t enumerate_statement_define_function(
+				size_t enumerate_statement_function_call(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_function_define(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_native_call(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);

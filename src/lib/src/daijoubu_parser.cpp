@@ -313,13 +313,13 @@ namespace DAIJOUBU {
 											case DAIJOUBU_FUNCTION_TYPE_CALL:
 												move_previous_token();
 												tok.subtype() = DAIJOUBU_STATEMENT_CALL_FUNCTION;
-												result = enumerate_statement_call_function(
+												result = enumerate_statement_function_call(
 														statement, parent_position);
 												break;
 											case DAIJOUBU_FUNCTION_TYPE_DEFINE:
 												move_previous_token();
 												tok.subtype() = DAIJOUBU_STATEMENT_DEFINE_FUNCTION;
-												result = enumerate_statement_define_function(
+												result = enumerate_statement_function_define(
 														statement, parent_position);
 												break;
 											default:
@@ -348,7 +348,7 @@ namespace DAIJOUBU {
 					break;
 				case DAIJOUBU_TOKEN_NATIVE:
 					tok.subtype() = DAIJOUBU_STATEMENT_CALL_NATIVE;
-					result = enumerate_statement_call_native(statement, parent_position);
+					result = enumerate_statement_native_call(statement, parent_position);
 					break;
 				case DAIJOUBU_TOKEN_OPERATOR:
 				case DAIJOUBU_TOKEN_OPERATOR_SIMPLE:
@@ -400,42 +400,6 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_statement_call_function(
-			__inout daijoubu_statement &statement,
-			__in size_t parent_position
-			)
-		{
-			size_t result;
-
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO
-			result = statement_add_child(statement, token().uid(), parent_position);
-			move_next_token();
-			// ---
-
-			return result;
-		}
-
-		size_t 
-		_daijoubu_parser::enumerate_statement_call_native(
-			__inout daijoubu_statement &statement,
-			__in size_t parent_position
-			)
-		{
-			size_t result;
-
-			SERIALIZE_CALL_RECUR(m_lock);
-
-			// TODO
-			result = statement_add_child(statement, token().uid(), parent_position);
-			move_next_token();
-			// ---
-
-			return result;
-		}
-
-		size_t 
 		_daijoubu_parser::enumerate_statement_control(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
@@ -454,7 +418,43 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_statement_define_function(
+		_daijoubu_parser::enumerate_statement_function_call(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = statement_add_child(statement, token().uid(), parent_position);
+			move_next_token();
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_function_define(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = statement_add_child(statement, token().uid(), parent_position);
+			move_next_token();
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_native_call(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)

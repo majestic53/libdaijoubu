@@ -32,8 +32,8 @@ Daijoubu Parser Grammar
 [ ] parameter_list ::= <parameter> [',' <parameter>]*
 	| <EMPTY>
 
-[X] statement ::= <statement_assignment> | <statement_call_function> | <statement_call_native> 
-	| <statement_control> | <statement_define_function> | <statement_unary>
+[X] statement ::= <statement_assignment> | <statement_control> | <statement_function_call> 
+	| <statement_function_define> | <statement_native_call>  | <statement_unary>
 
 [ ] statement_list ::= <statement>*
 
@@ -41,12 +41,12 @@ Daijoubu Parser Grammar
 	| <type>? <identifier> ('⇐' | '<-') <expression>
 	| <type>? <identifier> ('⇔' | '<->') <expression>
 
-[ ] statement_call_function ::= <identifier> '(' <expression_list> ')'
-
-[ ] statement_call_native ::= 'show' '(' <expression> ')'
-
 [ ] statement_control ::= <control_if> | <control_for> | <control_switch>
 
-[ ] statement_define_function ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> '}'
+[ ] statement_function_call ::= <identifier> '(' <expression_list> ')'
+
+[ ] statement_function_define ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> '}'
+
+[ ] statement_native_call ::= 'show' '(' <expression> ')'
 
 [ ] statement_unary ::= ('‡' | '¦' | '++' | '--') <identifier>
