@@ -4,7 +4,7 @@ e π null
 
 ## CONTROL
 
-break continue elif else final for if return show switch
+break continue elif else final for if return switch
 
 ## LITERAL BOOLEAN
 
@@ -13,6 +13,10 @@ false true
 ## MODIFIER
 
 ʰ ʱ ʲ ʳ
+
+## NATIVE
+
+show
 
 ## OPERATOR
 

@@ -1,24 +1,26 @@
 Daijoubu Lexer Grammar
 
-CLASSES: begin, constant, control, end, identifier, modifier, literal_boolean, literal_numeric, literal_string, 
-		operator, subscript, superscript, symbol, type
+CLASSES: begin, constant, control, end, identifier, modifier, native, literal_boolean, literal_numeric, 
+		literal_string, operator, statement subscript, superscript, symbol, type
 
 ---
 
 [X] constant ::= 'e' | 'π' | 'null'
 
 [X] control ::= 'break' | 'continue' | 'elif' | 'else' | 'final' | 'for' | 'if' | 'return' 
-		| 'show' | 'switch'
+		| 'switch'
 
 [X] identifier ::= [<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Nl>|'_'] [<Cf>|<Ll>|<Lm>|<Lo>|<Lt>|<Lu>|<Mc>|<Mn>|<Nd>|<Nl>|<Pc>|'_']*
 
-[X] modifier ::= <Lm> | '₋' | '₊' | '₌'
-
 [X] literal_boolean ::= 'false' | 'true'
 
-[X] literal_numeric ::= ['-']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
+[X] literal_numeric ::= ['-' | '-']?[0-9]+[.[0-9]*]? | '0b'[0-1]+ | '0o'[0-7]+ | '0h'[0-9A-F]
 
 [X] literal_string ::= '“'<UTF8_char>*'”'
+
+[X] modifier ::= <Lm> | '₋' | '₊' | '₌'
+
+[X] native ::= 'show'
 
 [X] operator ::= '+'		// addition
 	| 'arccsc'		// arc-cosecant
@@ -133,3 +135,4 @@ unused ::= '∠' 	(TBD)	// angle
 	| '⟩' 		(TBD)	// triangle bracket close
 	| '⟨' 		(TBD)	// triangle bracket open
 	| '⬜' 		(TBD)	// white large square
+	| '☭'		(TBD)	// glorious symbol

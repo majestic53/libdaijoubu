@@ -1,0 +1,42 @@
+Daijoubu Parser Grammar
+
+---
+
+[ ] control_case ::= '|' <literal> <statement_list>
+
+[ ] control_elif ::= '|' 'elif' '(' <expression> ')' <statement_list>
+
+[ ] control_else ::= '|' 'else' <statement_list>
+
+[ ] control_final ::= '|' <statement_list>
+
+[ ] control_for ::= 'for' '(' <control_for_initial> <expression> <control_for_iterator>* ')' '{' <statement_list> '}'
+
+[ ] control_for_initial ::= [<expression> ',']? [<statement_assignment> ',']*
+
+[ ] control_for_iterator ::= ',' (<statement_assignment> | <statement_unary>)
+
+[ ] control_if ::= 'if' '(' <expression> ')' '{' <statement_list> <control_elif>* <control_else>? '}'
+
+[ ] control_switch ::= 'switch' '(' <expression> ')' '{' <literal> <statement_list> <control_case>* <control_else>? <control_case>* '}'
+
+[ ] expression ::= 
+
+[ ] literal ::= <literal_boolean> | <literal_numeric> | <literal_string>
+
+[ ] statement ::= <statement_assignment> | <statement_call_function> | <statement_call_native> 
+	| <statement_control> | <statement_unary>
+
+[ ] statement_list ::= <statement>*
+
+[ ] statement_assignment ::= <type> <identifier>
+	| <type>? <identifier> ('⇐' | '<-') <expression>
+	| <type>? <identifier> ('⇔' | '<->') <expression>
+
+[ ] statement_call_function ::= <identifier> '(' <expression> [',' <expression>]* ')'
+
+[ ] statement_call_native ::= 'show' '(' <expression> ')'
+
+[ ] statement_control ::= control_if | control_for | control_switch
+
+[ ] statement_unary ::= ('‡' | '¦' | '++' | '--') <identifier>

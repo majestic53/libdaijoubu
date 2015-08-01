@@ -89,22 +89,52 @@ namespace DAIJOUBU {
 
 			protected:
 
-				size_t enumerate_assignment(
+				size_t enumerate_control_case(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
 
-				size_t enumerate_call_function(
+				size_t enumerate_control_elif(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
 
-				size_t enumerate_call_native(
+				size_t enumerate_control_else(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
 
-				size_t enumerate_control(
+				size_t enumerate_control_final(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control_for(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control_for_initial(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control_for_iterator(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control_if(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_control_switch(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_expression(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
@@ -114,7 +144,32 @@ namespace DAIJOUBU {
 					__in size_t parent_position
 					);
 
-				size_t enumerate_unary(
+				size_t enumerate_statement_assignment(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_call_function(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_call_native(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_control(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_list(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_statement_unary(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
 					);
@@ -124,6 +179,8 @@ namespace DAIJOUBU {
 					);
 
 				static daijoubu_node_factory_ptr node_factory(void);
+
+				daijoubu_statement statement_add(void);
 
 				daijoubu_statement &statement_add(
 					__in daijoubu_uid root_uid

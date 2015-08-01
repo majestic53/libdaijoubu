@@ -89,7 +89,7 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_assignment(
+		_daijoubu_parser::enumerate_control_case(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)
@@ -106,7 +106,7 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_call_function(
+		_daijoubu_parser::enumerate_control_elif(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)
@@ -123,7 +123,7 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_call_native(
+		_daijoubu_parser::enumerate_control_else(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)
@@ -140,7 +140,109 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_control(
+		_daijoubu_parser::enumerate_control_final(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control_for(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control_for_initial(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control_for_iterator(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control_if(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_control_switch(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_expression(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)
@@ -167,8 +269,7 @@ namespace DAIJOUBU {
 			SERIALIZE_CALL_RECUR(m_lock);
 
 			// TODO
-			result = 0;
-			statement.push_back(node_factory()->generate(token().uid()));
+			result = statement_add_child(statement, token().uid(), parent_position);
 			move_next_token();
 			// ---
 
@@ -176,7 +277,92 @@ namespace DAIJOUBU {
 		}
 
 		size_t 
-		_daijoubu_parser::enumerate_unary(
+		_daijoubu_parser::enumerate_statement_assignment(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_call_function(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_call_native(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_control(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_list(
+			__inout daijoubu_statement &statement,
+			__in size_t parent_position
+			)
+		{
+			size_t result;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			// TODO
+			result = 0;
+			// ---
+
+			return result;
+		}
+
+		size_t 
+		_daijoubu_parser::enumerate_statement_unary(
 			__inout daijoubu_statement &statement,
 			__in size_t parent_position
 			)
@@ -224,7 +410,8 @@ namespace DAIJOUBU {
 
 			if(has_next_token()
 					&& (m_stmt_position == daijoubu_parser::size())) {
-				enumerate_statement(stmt, INVALID_NODE_PARENT);
+				stmt = statement_add();
+				enumerate_statement(stmt, 0);
 				statement_insert(stmt);
 			}
 
@@ -301,6 +488,19 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return statement_at(m_stmt_position);
+		}
+
+		daijoubu_statement 
+		_daijoubu_parser::statement_add(void)
+		{
+			daijoubu_statement stmt;
+
+			SERIALIZE_CALL_RECUR(m_lock);
+
+			stmt.push_back(node_factory()->generate(
+				token_factory()->generate(DAIJOUBU_TOKEN_STATEMENT)));
+
+			return stmt;
 		}
 
 		daijoubu_statement & 

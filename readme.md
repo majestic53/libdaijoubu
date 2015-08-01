@@ -13,6 +13,13 @@ Changelog
 =========
 
 ##Version 0.1.1531
+*Updated: 7/31/2015*
+
+* Added parser enumeration routines (incomplete)
+* Added support for simple dialect unary numeric
+* Added parser grammar (inpcomplete)
+* Added statement/native call token type
+
 *Updated: 7/30/2015*
 
 * Added parser enumeration routines (incomplete)

@@ -178,7 +178,8 @@ namespace DAIJOUBU {
 	long double 
 	unicode_string_as_value(
 		__in const std::wstring &input,
-		__in daijoubu_radix_t radix
+		__in daijoubu_radix_t radix,
+		__in_opt bool simple
 		)
 	{
 		wchar_t ch;		
@@ -191,7 +192,9 @@ namespace DAIJOUBU {
 			switch(radix) {
 				case DAIJOUBU_RADIX_DECIMAL:
 
-					if(input.at(iter) == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION) {
+					if((input.at(iter) == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION)
+							|| (simple
+							&& (input.at(iter) == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION_SIMPLE))) {
 						negative = true;
 						++iter;
 					}

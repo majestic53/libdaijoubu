@@ -673,6 +673,26 @@ namespace DAIJOUBU {
 					}
 					break;
 				case DAIJOUBU_UNICODE_CLASS_PD:
+
+					if(m_simple && (character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION_SIMPLE)) {
+
+						if(has_next_character()) {
+							move_next_character();
+
+							if(is_number_character(DAIJOUBU_RADIX_DECIMAL)) {
+								move_previous_character();
+								enumerate_number();
+							} else {
+								move_previous_character();
+								enumerate_symbol();
+							}
+						} else {
+							enumerate_symbol();
+						}
+					} else {
+						enumerate_symbol();
+					}
+					break;
 				case DAIJOUBU_UNICODE_CLASS_PE:
 				case DAIJOUBU_UNICODE_CLASS_PO:
 				case DAIJOUBU_UNICODE_CLASS_PS:
@@ -838,6 +858,9 @@ namespace DAIJOUBU {
 			} else if(IS_DAIJOUBU_MODIFIER_TYPE(text)) {
 				type = DAIJOUBU_TOKEN_MODIFIER;
 				subtype = determine_token_subtype(text, type);
+			} else if(IS_DAIJOUBU_NATIVE_TYPE(text)) {
+				type = DAIJOUBU_TOKEN_NATIVE;
+				subtype = determine_token_subtype(text, type);
 			} else if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
 				type = DAIJOUBU_TOKEN_OPERATOR;
 				subtype = determine_token_subtype(text, type);
@@ -891,7 +914,9 @@ namespace DAIJOUBU {
 
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			if(character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION) {
+			if((character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION)
+					|| (m_simple
+					&& (character() == DAIJOUBU_LITERAL_NUMERIC_UNARY_NEGATION_SIMPLE))) {
 				text += character();
 				negative = true;
 				move_next_character();
@@ -974,7 +999,7 @@ namespace DAIJOUBU {
 
 			token_insert(token_add(DAIJOUBU_TOKEN_LITERAL_NUMERIC));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
-			tok.value() = unicode_string_as_value(text, radix);
+			tok.value() = unicode_string_as_value(text, radix, m_simple);
 		}
 
 		void 
@@ -1070,7 +1095,7 @@ namespace DAIJOUBU {
 			token_insert(token_add(DAIJOUBU_TOKEN_SUBSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
 			tok.value() = unicode_string_as_value(convert_subscript_to_string(text), 
-				DAIJOUBU_RADIX_DECIMAL);
+				DAIJOUBU_RADIX_DECIMAL, m_simple);
 		}
 
 		void 
@@ -1093,7 +1118,7 @@ namespace DAIJOUBU {
 			token_insert(token_add(DAIJOUBU_TOKEN_SUPERSCRIPT));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
 			tok.value() = unicode_string_as_value(convert_superscript_to_string(text), 
-				DAIJOUBU_RADIX_DECIMAL);
+				DAIJOUBU_RADIX_DECIMAL, m_simple);
 		}
 
 		void 
