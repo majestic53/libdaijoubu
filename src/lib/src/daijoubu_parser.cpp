@@ -708,6 +708,12 @@ namespace DAIJOUBU {
 			result = statement.size();
 
 			if(parent_position != INVALID_NODE_PARENT) {
+
+				if(parent_position >= statement.size()) {
+					THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(DAIJOUBU_PARSER_EXCEPTION_INVALID_POSITION,
+						L"Parent statement position: %llu", parent_position);
+				}
+
 				node_at_uid(statement.at(parent_position)).child_insert(result);
 			}
 
