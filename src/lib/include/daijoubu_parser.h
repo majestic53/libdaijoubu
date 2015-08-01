@@ -26,6 +26,12 @@ namespace DAIJOUBU {
 
 	namespace LANGUAGE {
 
+		typedef enum {
+			DAIJOUBU_FUNCTION_TYPE_NONE = 0,
+			DAIJOUBU_FUNCTION_TYPE_CALL,
+			DAIJOUBU_FUNCTION_TYPE_DEFINE,
+		} daijoubu_function_t;
+
 		typedef std::vector<daijoubu_uid> daijoubu_statement;
 
 		typedef class _daijoubu_parser :
@@ -164,6 +170,11 @@ namespace DAIJOUBU {
 					__in size_t parent_position
 					);
 
+				size_t enumerate_statement_define_function(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
 				size_t enumerate_statement_list(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
@@ -174,13 +185,13 @@ namespace DAIJOUBU {
 					__in size_t parent_position
 					);
 
+				daijoubu_function_t is_function_type(void);
+
 				static daijoubu_node &node_at_uid(
 					__in daijoubu_uid uid
 					);
 
 				static daijoubu_node_factory_ptr node_factory(void);
-
-				daijoubu_statement statement_add(void);
 
 				daijoubu_statement &statement_add(
 					__in daijoubu_uid root_uid
@@ -189,6 +200,12 @@ namespace DAIJOUBU {
 				static size_t statement_add_child(
 					__in daijoubu_statement &statement,
 					__in daijoubu_uid child_uid,
+					__in size_t parent_position
+					);
+
+				static size_t statement_add_control(
+					__in daijoubu_statement &statement,
+					__in daijoubu_token_t type,
 					__in size_t parent_position
 					);
 

@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1531
+*Updated: 8/1/2015*
+
+* Implemented base statement enumeration routine
+* Added additional parser enumeration routines (incomplete)
+
 *Updated: 7/31/2015*
 
 * Added parser enumeration routines (incomplete)

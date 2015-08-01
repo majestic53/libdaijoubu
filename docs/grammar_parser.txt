@@ -22,10 +22,18 @@ Daijoubu Parser Grammar
 
 [ ] expression ::= 
 
+[ ] expression_list ::= <expression> [',' <expression>]*
+	| <EMPTY>
+
 [ ] literal ::= <literal_boolean> | <literal_numeric> | <literal_string>
 
-[ ] statement ::= <statement_assignment> | <statement_call_function> | <statement_call_native> 
-	| <statement_control> | <statement_unary>
+[ ] parameter ::= <type> <identifier>
+
+[ ] parameter_list ::= <parameter> [',' <parameter>]*
+	| <EMPTY>
+
+[X] statement ::= <statement_assignment> | <statement_call_function> | <statement_call_native> 
+	| <statement_control> | <statement_define_function> | <statement_unary>
 
 [ ] statement_list ::= <statement>*
 
@@ -33,10 +41,12 @@ Daijoubu Parser Grammar
 	| <type>? <identifier> ('⇐' | '<-') <expression>
 	| <type>? <identifier> ('⇔' | '<->') <expression>
 
-[ ] statement_call_function ::= <identifier> '(' <expression> [',' <expression>]* ')'
+[ ] statement_call_function ::= <identifier> '(' <expression_list> ')'
 
 [ ] statement_call_native ::= 'show' '(' <expression> ')'
 
-[ ] statement_control ::= control_if | control_for | control_switch
+[ ] statement_control ::= <control_if> | <control_for> | <control_switch>
+
+[ ] statement_define_function ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> '}'
 
 [ ] statement_unary ::= ('‡' | '¦' | '++' | '--') <identifier>
