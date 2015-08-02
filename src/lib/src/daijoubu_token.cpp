@@ -24,14 +24,26 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
+		static const std::wstring DAIJOUBU_TOKEN_SPECIAL_STR[] = {
+			L"NONE", L"FOLLOW", L"POINTER", 
+			};
+
+		#define DAIJOUBU_TOKEN_SPECIAL_STRING(_TYPE_) \
+			((_TYPE_) > DAIJOUBU_TOKEN_SPECIAL_MAX ? UNKNOWN : \
+			CHECK_STRING(DAIJOUBU_TOKEN_SPECIAL_STR[_TYPE_]))
+
+		#define DEFAULT_TOKEN_ORDER 0
+
 		_daijoubu_token::_daijoubu_token(
 			__in_opt daijoubu_token_t type,
 			__in_opt uint16_t subtype
 			) :
 				m_column(0),
 				m_offset(0),
+				m_order(DEFAULT_TOKEN_ORDER),
 				m_position(0),
 				m_row(0),
+				m_special(DAIJOUBU_TOKEN_SPECIAL_NONE),
 				m_subtype(subtype),
 				m_type(type),
 				m_value(0.0)
@@ -46,8 +58,10 @@ namespace DAIJOUBU {
 				m_column(other.m_column),
 				m_line(other.m_line),
 				m_offset(other.m_offset),
+				m_order(other.m_order),
 				m_position(other.m_position),
 				m_row(other.m_row),
+				m_special(other.m_special),
 				m_subtype(other.m_subtype),
 				m_text(other.m_text),
 				m_type(other.m_type),
@@ -73,8 +87,10 @@ namespace DAIJOUBU {
 				m_column = other.m_column;
 				m_line = other.m_line;
 				m_offset = other.m_offset;
+				m_order = other.m_order;
 				m_position = other.m_position;
 				m_row = other.m_row;
+				m_special = other.m_special;
 				m_subtype = other.m_subtype;
 				m_text = other.m_text;
 				m_type = other.m_type;
@@ -98,9 +114,11 @@ namespace DAIJOUBU {
 				result = (daijoubu_uid_class::operator==(other)
 					&& (m_column == other.m_column)
 					&& (m_line == other.m_line)
+					&& (m_order == other.m_order)
 					&& (m_position == other.m_position)
 					&& (m_offset == other.m_offset)
 					&& (m_row == other.m_row)
+					&& (m_special == other.m_special)
 					&& (m_subtype == other.m_subtype)
 					&& (m_text == other.m_text)
 					&& (m_type == other.m_type)
@@ -140,6 +158,13 @@ namespace DAIJOUBU {
 			return m_offset;
 		}
 
+		uint8_t &
+		_daijoubu_token::order(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_order;
+		}
+
 		size_t &
 		_daijoubu_token::position(void)
 		{
@@ -152,6 +177,13 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 			return m_row;
+		}
+
+		daijoubu_token_special_t &
+		_daijoubu_token::special(void)
+		{
+			SERIALIZE_CALL_RECUR(m_lock);
+			return m_special;
 		}
 
 		uint16_t &
@@ -217,6 +249,14 @@ namespace DAIJOUBU {
 				case DAIJOUBU_TOKEN_SUBSCRIPT:
 				case DAIJOUBU_TOKEN_SUPERSCRIPT:
 					result << L" " << token.m_value;
+					break;
+				case DAIJOUBU_TOKEN_TYPE:
+					result << L" ORDER: " << (int) token.m_order 
+						<< ", INDEX: " << token.m_value;
+
+					if(token.m_special != DAIJOUBU_TOKEN_SPECIAL_NONE) {
+						result << ", SPECIAL: " << DAIJOUBU_TOKEN_SPECIAL_STRING(token.m_special);
+					}
 					break;
 				default:
 					break;

@@ -13,6 +13,13 @@ Changelog
 =========
 
 ##Version 0.1.1531
+*Updated: 8/2/2015*
+
+* Implemented statement enumeration routines (incomplete)
+* Added order and special flags to tokens
+* Fixed a bug in simple dialect lexer operator enumeration
+	* Unary operators ('++' | '--') used with an underscore prefixed identifier (ie. '++_abc' or similar) would be interpreted incorrectly.
+
 *Updated: 8/1/2015*
 
 * Implemented base statement enumeration routine

@@ -25,3 +25,5 @@ arccsc arccos arccot arcsec arcsin arctan csc cos log ln sec sin tan
 ## TYPE
 
 bool byte float int string ubyte uint
+
+bool₀ bool* bool' bool₀* bool₀' bool0 bool₀0 bool₀*0 bool₀'0 bool₉*6

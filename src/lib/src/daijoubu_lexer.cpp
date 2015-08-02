@@ -775,7 +775,7 @@ namespace DAIJOUBU {
 		void 
 		_daijoubu_lexer::enumerate_keyword(void)
 		{			
-			std::wstring text;
+			std::wstring index, text;
 			bool terminated = false, lm_ch = false;
 			uint16_t subtype = INVALID_TOKEN_SUBTYPE;
 			daijoubu_token_t type = DAIJOUBU_TOKEN_IDENTIFIER;
@@ -874,6 +874,54 @@ namespace DAIJOUBU {
 			token_insert(token_add(type));
 			daijoubu_token &tok = token_at(m_tok_position + 1);
 			tok.subtype() = subtype;
+
+			if(type == DAIJOUBU_TOKEN_TYPE) {
+				tok.text() = text;
+
+				if(is_subscript_character()) {
+					tok.text() += character();
+					tok.order() = unicode_string_as_value(convert_subscript_to_string(
+						std::wstring(1, character())), DAIJOUBU_RADIX_DECIMAL, m_simple);
+					move_next_character();
+				}
+
+				switch(character()) {
+					case DAIJOUBU_TYPE_SPECIAL_POINTER:
+						tok.text() += character();
+						tok.special() = DAIJOUBU_TOKEN_SPECIAL_POINTER;
+
+						if(has_next_character()) {
+							move_next_character();
+						}
+						break;
+					case DAIJOUBU_TYPE_SPECIAL_SHADOW:
+						tok.text() += character();
+						tok.special() = DAIJOUBU_TOKEN_SPECIAL_FOLLOW;
+
+						if(has_next_character()) {
+							move_next_character();
+						}
+						break;
+					default:
+						break;
+				}
+
+				while(is_number_character(DAIJOUBU_RADIX_DECIMAL)) {
+					index += character();
+					tok.text() += character();
+
+					if(!has_next_character()) {
+						break;
+					}
+
+					move_next_character();
+				}
+
+				if(!index.empty()) {
+					tok.value() = unicode_string_as_value(index, DAIJOUBU_RADIX_DECIMAL, 
+						m_simple);
+				}
+			}
 
 			if(subtype == INVALID_TOKEN_SUBTYPE) {
 				tok.text() = text;
@@ -1141,8 +1189,7 @@ namespace DAIJOUBU {
 
 					move_next_character();
 				} while(IS_DAIJOUBU_OPERATOR_TYPE(text + character())
-						|| IS_DAIJOUBU_SYMBOL_TYPE(text + character())
-						|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));
+						|| IS_DAIJOUBU_SYMBOL_TYPE(text + character()));
 
 				if(IS_DAIJOUBU_OPERATOR_TYPE(text)) {
 					type = DAIJOUBU_TOKEN_OPERATOR;
@@ -1162,6 +1209,11 @@ namespace DAIJOUBU {
 					}
 
 					move_next_character();
+
+					if((character() == DAIJOUBU_IDENTIFIER_LOW_LINE)
+							&& (text.size() >= DAIJOUBU_UNDERSCORE_MAX_POSITION)) {
+						break;
+					}
 				} while(IS_DAIJOUBU_OPERATOR_SIMPLE_TYPE(text + character())
 						|| IS_DAIJOUBU_SYMBOL_SIMPLE_TYPE(text + character())
 						|| (character() == DAIJOUBU_IDENTIFIER_LOW_LINE));

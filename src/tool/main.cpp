@@ -34,6 +34,7 @@ enum {
 //#define DAIJOUBU_TEST_LEXER_BASE
 //#define DAIJOUBU_TEST_LEXER
 #define DAIJOUBU_TEST_PARSER
+//#define DAIJOUBU_TEST_PERVIOUS
 #endif // DAIJOUBU_TEST
 
 int 
@@ -44,6 +45,7 @@ main(
 {
 	uint32_t id;
 	int result = 0;
+	bool simple_mode;
 	daijoubu_ptr inst = NULL;
 	daijoubu_region_t region;
 	std::wstring input, message;
@@ -60,11 +62,11 @@ main(
 		//std::wcout << inst->to_string(true) << std::endl;
 
 #ifdef DAIJOUBU_TEST
-
 		input = L"";
+		simple_mode = false;
 
 #ifdef DAIJOUBU_TEST_LEXER_BASE
-		daijoubu_lexer_base comp(input);
+		daijoubu_lexer_base comp(input, simple_mode);
 		std::wcout << L"Size: " << comp.size() << std::endl;
 
 		while(comp.has_next_character()) {
@@ -74,14 +76,16 @@ main(
 
 		std::wcout << comp.to_string(true) << std::endl;
 
+#ifdef DAIJOUBU_TEST_PERVIOUS
 		while(comp.has_previous_character()) {
 			comp.move_previous_character();
 			std::wcout << comp.to_string(true) << std::endl;
 		}
+#endif // DAIJOUBU_TEST_PERVIOUS
 #endif // DAIJOUBU_TEST_LEXER_BASE
 
 #ifdef DAIJOUBU_TEST_LEXER
-		daijoubu_lexer comp(input);
+		daijoubu_lexer comp(input, simple_mode);
 
 		comp.discover();
 		std::wcout << L"Size: " << comp.size() << std::endl;
@@ -93,14 +97,16 @@ main(
 
 		std::wcout << comp.to_string(true) << std::endl;
 
+#ifdef DAIJOUBU_TEST_PERVIOUS
 		while(comp.has_previous_token()) {
 			comp.move_previous_token();
 			std::wcout << comp.to_string(true) << std::endl;
 		}
+#endif // DAIJOUBU_TEST_PERVIOUS
 #endif // DAIJOUBU_TEST_LEXER
 
 #ifdef DAIJOUBU_TEST_PARSER
-		daijoubu_parser comp(input);
+		daijoubu_parser comp(input, simple_mode);
 
 		comp.discover();
 		std::wcout << L"Size: " << comp.size() << std::endl;
@@ -112,10 +118,12 @@ main(
 
 		std::wcout << comp.to_string(true) << std::endl;
 
+#ifdef DAIJOUBU_TEST_PERVIOUS
 		while(comp.has_previous_statement()) {
 			comp.move_previous_statement();
 			std::wcout << comp.to_string(true) << std::endl;
 		}
+#endif // DAIJOUBU_TEST_PERVIOUS
 #endif // DAIJOUBU_TEST_PARSER
 
 #else

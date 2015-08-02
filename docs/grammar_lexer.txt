@@ -99,7 +99,7 @@ CLASSES: begin, constant, control, end, identifier, modifier, native, literal_bo
 	| ';'			// statement terminator
 	| ':'			// ternary delimiter
 
-[X] type ::= 'bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'
+[X] type ::= ['bool' | 'byte' | 'float' | 'int' | 'string' | 'ubyte' | 'uint'] [₀-₉]? ['*' | ''']? [0-9]*
 
 unused ::= '∠' 	(TBD)	// angle
 	| '≈' 		(TBD)	// approximately equal

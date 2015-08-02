@@ -26,6 +26,14 @@ namespace DAIJOUBU {
 
 	namespace COMPONENT {
 
+		typedef enum {
+			DAIJOUBU_TOKEN_SPECIAL_NONE = 0,
+			DAIJOUBU_TOKEN_SPECIAL_FOLLOW,
+			DAIJOUBU_TOKEN_SPECIAL_POINTER,
+		} daijoubu_token_special_t;
+
+		#define DAIJOUBU_TOKEN_SPECIAL_MAX DAIJOUBU_TOKEN_SPECIAL_POINTER
+
 		typedef class _daijoubu_token :
 				public daijoubu_uid_class {
 
@@ -60,9 +68,13 @@ namespace DAIJOUBU {
 
 				size_t &offset(void);
 
+				uint8_t &order(void);
+
 				size_t &position(void);
 
 				size_t &row(void);
+
+				daijoubu_token_special_t &special(void);
 
 				uint16_t &subtype(void);
 
@@ -89,9 +101,13 @@ namespace DAIJOUBU {
 
 				size_t m_offset;
 
+				uint8_t m_order;
+
 				size_t m_position;
 
 				size_t m_row;
+
+				daijoubu_token_special_t m_special;
 
 				uint16_t m_subtype;
 

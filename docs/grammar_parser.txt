@@ -25,9 +25,9 @@ Daijoubu Parser Grammar
 [ ] expression_list ::= <expression> [',' <expression>]*
 	| <EMPTY>
 
-[ ] literal ::= <literal_boolean> | <literal_numeric> | <literal_string>
+[X] literal ::= <literal_boolean> | <literal_numeric> | <literal_string>
 
-[ ] parameter ::= <type> <identifier>
+[ ] parameter ::= <type> <identifier> [('⇐' | '<-') <expression]?
 
 [ ] parameter_list ::= <parameter> [',' <parameter>]*
 	| <EMPTY>
@@ -37,16 +37,16 @@ Daijoubu Parser Grammar
 
 [ ] statement_list ::= <statement>*
 
-[ ] statement_assignment ::= <type> <identifier>
-	| <type>? <identifier> ('⇐' | '<-') <expression>
-	| <type>? <identifier> ('⇔' | '<->') <expression>
+[ ] statement_assignment ::= <type> <identifier> ';'
+	| <type>? <identifier> ('⇐' | '<-') <expression> ';'
+	| <type>? <identifier> ('⇔' | '<->') <expression> ';'
 
 [ ] statement_control ::= <control_if> | <control_for> | <control_switch>
 
-[ ] statement_function_call ::= <identifier> '(' <expression_list> ')'
+[X] statement_function_call ::= <identifier> '(' <expression_list> ')' ';'
 
-[ ] statement_function_define ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> '}'
+[ ] statement_function_define ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> <control_final>? '}'
 
-[ ] statement_native_call ::= 'show' '(' <expression> ')'
+[X] statement_native_call ::= <native> '(' <expression_list> ')' ';'
 
-[ ] statement_unary ::= ('‡' | '¦' | '++' | '--') <identifier>
+[X] statement_unary ::= ('‡' | '¦' | '++' | '--') <identifier> ';'

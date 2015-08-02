@@ -1,0 +1,7 @@
+## STATEMENT UNARY
+
+‡ab; ‡_ab; ‡ ab; ‡ _ab; ¦ab; ¦_ab; ¦ ab; ¦ _ab;
+
+## STATEMENT UNARY SIMPLE
+
+++ab; ++_ab; ++ ab; ++ _ab; --ab; --_ab; -- ab; -- _ab;

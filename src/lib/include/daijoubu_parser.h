@@ -145,6 +145,26 @@ namespace DAIJOUBU {
 					__in size_t parent_position
 					);
 
+				size_t enumerate_expression_list(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_literal(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_parameter(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
+				size_t enumerate_parameter_list(
+					__inout daijoubu_statement &statement,
+					__in size_t parent_position
+					);
+
 				size_t enumerate_statement(
 					__inout daijoubu_statement &statement,
 					__in size_t parent_position
