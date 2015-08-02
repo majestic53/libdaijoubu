@@ -886,17 +886,17 @@ namespace DAIJOUBU {
 				}
 
 				switch(character()) {
-					case DAIJOUBU_TYPE_SPECIAL_POINTER:
+					case DAIJOUBU_TYPE_SPECIAL_FOLLOW:
 						tok.text() += character();
-						tok.special() = DAIJOUBU_TOKEN_SPECIAL_POINTER;
+						tok.special() = DAIJOUBU_TOKEN_SPECIAL_FOLLOW;
 
 						if(has_next_character()) {
 							move_next_character();
 						}
 						break;
-					case DAIJOUBU_TYPE_SPECIAL_SHADOW:
+					case DAIJOUBU_TYPE_SPECIAL_POINTER:
 						tok.text() += character();
-						tok.special() = DAIJOUBU_TOKEN_SPECIAL_FOLLOW;
+						tok.special() = DAIJOUBU_TOKEN_SPECIAL_POINTER;
 
 						if(has_next_character()) {
 							move_next_character();

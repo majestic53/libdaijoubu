@@ -243,7 +243,7 @@ namespace DAIJOUBU {
 				case DAIJOUBU_TOKEN_LITERAL_BOOLEAN:
 				case DAIJOUBU_TOKEN_LITERAL_NUMERIC:
 				case DAIJOUBU_TOKEN_LITERAL_STRING:
-					parent_position = statement_add_child(statement, token().uid(), parent_position);
+					statement_add_child(statement, token().uid(), parent_position);
 					move_next_token();
 					break;
 				default:
