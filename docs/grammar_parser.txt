@@ -27,25 +27,24 @@ Daijoubu Parser Grammar
 
 [X] literal ::= <literal_boolean> | <literal_numeric> | <literal_string>
 
-[ ] parameter ::= <type> <identifier> [('⇐' | '<-') <expression]?
+[X] parameter ::= <type> <identifier> [('⇐' | '<-') <expression>]?
 
-[ ] parameter_list ::= <parameter> [',' <parameter>]*
+[X] parameter_list ::= <parameter> [',' <parameter>]*
 	| <EMPTY>
 
 [X] statement ::= <statement_assignment> | <statement_control> | <statement_function_call> 
 	| <statement_function_define> | <statement_native_call>  | <statement_unary>
 
-[ ] statement_list ::= <statement>*
+[X] statement_list ::= <statement>*
 
-[ ] statement_assignment ::= <type> <identifier> ';'
-	| <type>? <identifier> ('⇐' | '<-') <expression> ';'
-	| <type>? <identifier> ('⇔' | '<->') <expression> ';'
+[X] statement_assignment ::= <type> <identifier> ';'
+	| <type>? <identifier> ('⇐' | '⇔' | '<-' | '<->') <expression> ';'
 
-[ ] statement_control ::= <control_if> | <control_for> | <control_switch>
+[X] statement_control ::= <control_if> | <control_for> | <control_switch>
 
 [X] statement_function_call ::= <identifier> '(' <expression_list> ')' ';'
 
-[ ] statement_function_define ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> <control_final>? '}'
+[X] statement_function_define ::= <identifier> '(' <parameter_list> ')' '{' <statement_list> <control_final>? '}'
 
 [X] statement_native_call ::= <native> '(' <expression_list> ')' ';'
 

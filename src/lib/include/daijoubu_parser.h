@@ -207,6 +207,8 @@ namespace DAIJOUBU {
 
 				daijoubu_function_t is_function_type(void);
 
+				bool is_statement_type(void);
+
 				static daijoubu_node &node_at_uid(
 					__in daijoubu_uid uid
 					);

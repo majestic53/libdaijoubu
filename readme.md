@@ -12,6 +12,13 @@ Table of Contents
 Changelog
 =========
 
+##Version 0.1.1532
+*Updated: 8/3/2015*
+
+* Implemented statement enumeration routines (incomplete)
+* Added proper syntactical error checking in enumeration routines
+* Added additional token types
+
 ##Version 0.1.1531
 *Updated: 8/2/2015*
 
@@ -70,25 +77,6 @@ Changelog
 *Updated: 7/20/2015*
 
 * Added operator/symbol token support
-
-###Version 0.1.1529
-*Updated: 7/16/2015*
-
-* Added constant/control/identifier/modifier/operator (parital)/type token support
-
-*Updated: 7/15/2015*
-
-* Added token enumeration (incomplete)
-
-*Updated: 7/14/2015*
-
-* Added token subtypes (complete)
-* Added string literal support
-
-*Updated: 7/13/2015*
-
-* Added token subtypes (incomplete)
-* Added support for simple dialect
 
 *Changelog truncated (see file history for full log)*
 
