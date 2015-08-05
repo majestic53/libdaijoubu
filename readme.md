@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1532
+*Updated: 8/4/2015*
+
+* Implemented control enumeration routines (incomplete)
+
 *Updated: 8/3/2015*
 
 * Implemented statement enumeration routines (incomplete)

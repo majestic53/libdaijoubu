@@ -2,13 +2,13 @@ Daijoubu Parser Grammar
 
 ---
 
-[ ] control_case ::= '|' <literal> <statement_list>
+[X] control_case ::= '|' <literal> <statement_list>
 
-[ ] control_elif ::= '|' 'elif' '(' <expression> ')' <statement_list>
+[X] control_elif ::= '|' 'elif' '(' <expression> ')' <statement_list>
 
-[ ] control_else ::= '|' 'else' <statement_list>
+[X] control_else ::= '|' 'else' <statement_list>
 
-[ ] control_final ::= '|' <statement_list>
+[X] control_final ::= '|' <statement_list>
 
 [ ] control_for ::= 'for' '(' <control_for_initial> <expression> <control_for_iterator>* ')' '{' <statement_list> '}'
 

@@ -96,7 +96,42 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(token().type()) {
+				case DAIJOUBU_TOKEN_SYMBOL:
+				case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+					switch(token().subtype()) {
+						case DAIJOUBU_SYMBOL_CONTEXT_SEPERATOR:
+						case DAIJOUBU_SYMBOL_SIMPLE_CONTEXT_SEPERATOR:
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_LITERAL,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+							parent_position = enumerate_literal(statement, parent_position);
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_STATEMENT,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							enumerate_statement_list(statement, parent_position);
+							break;
+						default:
+							THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+								DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTENT,
+								L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+						DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+			}
 
 			return parent_position;
 		}
@@ -109,7 +144,104 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(token().type()) {
+				case DAIJOUBU_TOKEN_SYMBOL:
+				case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+					switch(token().subtype()) {
+						case DAIJOUBU_SYMBOL_CONTEXT_SEPERATOR:
+						case DAIJOUBU_SYMBOL_SIMPLE_CONTEXT_SEPERATOR:
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTROL_ELIF,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+
+							if((token().type() != DAIJOUBU_TOKEN_CONTROL)
+									|| (token().subtype() != DAIJOUBU_CONTROL_ELIF)) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTROL_ELIF,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));	
+							}
+
+							parent_position = statement_add_child(statement, token().uid(), parent_position);
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_FUNCTION_BRACKET_OPEN,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+
+							switch(token().type()) {
+								case DAIJOUBU_TOKEN_SYMBOL:
+								case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+									switch(token().subtype()) {
+										case DAIJOUBU_SYMBOL_FUNCTION_BRACKET_OPEN:
+										case DAIJOUBU_SYMBOL_SIMPLE_FUNCTION_BRACKET_OPEN:
+											move_next_token();
+											break;
+										default:
+											THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+												DAIJOUBU_PARSER_EXCEPTION_EXPECTING_FUNCTION_BRACKET_OPEN,
+												L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+									}
+									break;
+								default:
+									THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+										DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+										L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							enumerate_expression(statement, parent_position);
+
+							switch(token().type()) {
+								case DAIJOUBU_TOKEN_SYMBOL:
+								case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+									switch(token().subtype()) {
+										case DAIJOUBU_SYMBOL_FUNCTION_BRACKET_CLOSE:
+										case DAIJOUBU_SYMBOL_SIMPLE_FUNCTION_BRACKET_CLOSE:
+
+											if(!has_next_token()) {
+												THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+													DAIJOUBU_PARSER_EXCEPTION_EXPECTING_STATEMENT,
+													L"\n\t%ls", 
+													CHECK_STRING(statement_exception(1, true)));
+											}
+
+											move_next_token();
+											break;
+										default:
+											THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+												DAIJOUBU_PARSER_EXCEPTION_EXPECTING_FUNCTION_BRACKET_CLOSE,
+												L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+									}
+									break;
+								default:
+									THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+										DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+										L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							enumerate_statement_list(statement, parent_position);
+							break;
+						default:
+							THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+								DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTENT,
+								L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+						DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+			}
 
 			return parent_position;
 		}
@@ -122,7 +254,51 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(token().type()) {
+				case DAIJOUBU_TOKEN_SYMBOL:
+				case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+					switch(token().subtype()) {
+						case DAIJOUBU_SYMBOL_CONTEXT_SEPERATOR:
+						case DAIJOUBU_SYMBOL_SIMPLE_CONTEXT_SEPERATOR:
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTROL_ELSE,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+
+							if((token().type() != DAIJOUBU_TOKEN_CONTROL)
+									|| (token().subtype() != DAIJOUBU_CONTROL_ELSE)) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTROL_ELSE,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));	
+							}
+
+							parent_position = statement_add_child(statement, token().uid(), parent_position);
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_STATEMENT,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+							enumerate_statement_list(statement, parent_position);
+							break;
+						default:
+							THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+								DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTENT,
+								L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+						DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+			}
 
 			return parent_position;
 		}
@@ -135,7 +311,34 @@ namespace DAIJOUBU {
 		{
 			SERIALIZE_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(token().type()) {
+				case DAIJOUBU_TOKEN_SYMBOL:
+				case DAIJOUBU_TOKEN_SYMBOL_SIMPLE:
+
+					switch(token().subtype()) {
+						case DAIJOUBU_SYMBOL_CONTEXT_SEPERATOR:
+						case DAIJOUBU_SYMBOL_SIMPLE_CONTEXT_SEPERATOR:
+
+							if(!has_next_token()) {
+								THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+									DAIJOUBU_PARSER_EXCEPTION_EXPECTING_STATEMENT,
+									L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+							}
+
+							move_next_token();
+							enumerate_statement_list(statement, parent_position);
+							break;
+						default:
+							THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+								DAIJOUBU_PARSER_EXCEPTION_EXPECTING_CONTENT,
+								L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+					}
+					break;
+				default:
+					THROW_DAIJOUBU_PARSER_EXCEPTION_MESSAGE(
+						DAIJOUBU_PARSER_EXCEPTION_EXPECTING_SYMBOL,
+						L"\n\t%ls", CHECK_STRING(statement_exception(1, true)));
+			}
 
 			return parent_position;
 		}
